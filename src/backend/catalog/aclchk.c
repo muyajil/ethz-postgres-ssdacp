@@ -64,15 +64,7 @@
 #include "utils/rel.h"
 #include "utils/syscache.h"
 #include "utils/tqual.h"
-
-/*
- * Header of the SSDACP Module.
- */
-
-#ifndef SSDACP_HEADER
-#define SSDACP_HEADER
 #include "catalog/ssdacp.h"
-#endif
 
 /*
  * Internal format used by ALTER DEFAULT PRIVILEGES.

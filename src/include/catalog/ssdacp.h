@@ -1,7 +1,12 @@
-#DEFINE SSDACP_ACTIVATE 1
+#ifndef SSDACP_H
+#define SSDACP_H
 
-static AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
+#ifndef SSDACP_ACTIVATE 1
+
+extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
 						 bool all_privs, AclMode privileges,
 						 Oid objectId, Oid grantorId,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname);
+
+#endif /* SSDACP_H */

@@ -56,6 +56,7 @@
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
 #include "utils/syscache.h"
+#include "catalog/ssdacp.h"
 
 
 /*
@@ -523,6 +524,9 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									 LOCKMODE lockmode,
 									 Oid *existing_relation_id)
 {
+	if(SSDACP_ACTIVATE){
+		ssdacp_RangeVarGetAndCheckCreationNamespace(relation, lockmode, existing_relation_id);
+	} else {
 	uint64		inval_count;
 	Oid			relid;
 	Oid			oldrelid = InvalidOid;
@@ -620,7 +624,7 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 		*existing_relation_id = relid;
 	return nspid;
 }
-
+}
 /*
  * Adjust the relpersistence for an about-to-be-created relation based on the
  * creation namespace, and throw an error for invalid combinations.

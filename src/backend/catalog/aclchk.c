@@ -69,10 +69,10 @@
  * Header of the SSDACP Module.
  */
 
-#IFNDEF SSDACP_HEADER
-#DEFINE SSDACP_HEADER
+#ifndef SSDACP_HEADER
+#define SSDACP_HEADER
 #include "catalog/ssdacp.h"
-#ENDIF
+#endif
 
 /*
  * Internal format used by ALTER DEFAULT PRIVILEGES.

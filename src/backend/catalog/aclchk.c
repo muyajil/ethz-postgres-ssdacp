@@ -65,6 +65,14 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 
+/*
+ * Header of the SSDACP Module.
+ */
+
+#IFNDEF SSDACP_HEADER
+#DEFINE SSDACP_HEADER
+#include "catalog/ssdacp.h"
+#ENDIF
 
 /*
  * Internal format used by ALTER DEFAULT PRIVILEGES.
@@ -218,6 +226,11 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname)
 {
+    if(SSDACP_ACTIVATE){
+        ssdacp_restrict_and_check_grant(is_grant, avail_goptions, all_privs,
+                                        privileges, objectId, grantorId, objkind,
+                                        objname, att_number, colname);
+    } else {
 	AclMode		this_privileges;
 	AclMode		whole_mask;
 
@@ -355,6 +368,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 	}
 
 	return this_privileges;
+    }
 }
 
 /*

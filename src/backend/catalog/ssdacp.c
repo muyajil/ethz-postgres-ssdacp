@@ -35,7 +35,8 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 			  bool isInternal);
 
 /* Declaration of function that checks non_utility commands
- * 
+ * If the command is allowed this function returns true
+ * If the command is not allowed this function returns false
  */
 
 bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);

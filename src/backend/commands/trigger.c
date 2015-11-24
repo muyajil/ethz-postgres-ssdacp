@@ -57,7 +57,7 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 #include "utils/tuplestore.h"
-
+#include "catalog/ssdacp.h"
 
 /* GUC variables */
 int			SessionReplicationRole = SESSION_REPLICATION_ROLE_ORIGIN;

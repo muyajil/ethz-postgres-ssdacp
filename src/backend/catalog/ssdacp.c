@@ -4,14 +4,19 @@
 #include "utils/acl.h"
 #include "access/attnum.h"
 
-//Definition of function that checks GRANT
+/* Declaration of function that checks GRANT
+ * If the grant is allowed this function returns the current privileges
+ * If the grant is not allowed this function throws an error and cancels the operation
+ */
 static AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
 						 bool all_privs, AclMode privileges,
 						 Oid objectId, Oid grantorId,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname);
 
-//Definition of function that checks CREATE for relations
+/* Declaration of function that checks CREATE for relations
+ * 
+ */
 Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,
 									     Oid *existing_relation_id);

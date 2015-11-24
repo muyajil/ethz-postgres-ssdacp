@@ -13,4 +13,8 @@ extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_gopt
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname);
 
+extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
+			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
+			  bool isInternal);
+
 #endif /* SSDACP_H */

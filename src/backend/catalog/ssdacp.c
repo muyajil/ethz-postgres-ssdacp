@@ -3,6 +3,8 @@
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
 #include "access/attnum.h"
+#include "storage/lockdefs.h"
+#include "primnodes.h"
 
 /* Declaration of function that checks GRANT
  * If the grant is allowed this function returns the current privileges

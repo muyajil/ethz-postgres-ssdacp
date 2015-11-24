@@ -542,6 +542,9 @@ ExecutorRewind(QueryDesc *queryDesc)
 bool
 ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
+	if(SSDACP_ACTIVATE){
+		ssdacp_ExecCheckRTPerms(rangeTable, ereport_on_violation);
+	} else {
 	ListCell   *l;
 	bool		result = true;
 
@@ -564,6 +567,7 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 		result = (*ExecutorCheckPerms_hook) (rangeTable,
 											 ereport_on_violation);
 	return result;
+}
 }
 
 /*

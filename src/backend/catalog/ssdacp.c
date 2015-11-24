@@ -25,7 +25,8 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     Oid *existing_relation_id);
 
 /* Declaration of function that checks CREATE for triggers
- *
+ * If the create trigger is allowed this function returns the address of the created trigger
+ * If the create trigger is not allowed this function signals an error
  */
 ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
@@ -50,5 +51,5 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
 {
-	
+
 }

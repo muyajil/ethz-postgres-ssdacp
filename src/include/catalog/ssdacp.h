@@ -17,4 +17,6 @@ extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *quer
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal);
 
+extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+
 #endif /* SSDACP_H */

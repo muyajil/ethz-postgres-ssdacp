@@ -138,6 +138,9 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
 {
+    if(SSDACP_ACTIVATE){
+        ssdacp_CreateTrigger(stmt, queryString, relOid, refRelOid, constraintOid, indexOid, isInternal);
+    } else {
 	int16		tgtype;
 	int			ncolumns;
 	int16	   *columns;
@@ -801,6 +804,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	heap_close(rel, NoLock);
 
 	return myself;
+}
 }
 
 

@@ -24,6 +24,13 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,
 									     Oid *existing_relation_id);
 
+/* Declaration of function that checks CREATE for triggers
+ *
+ */
+ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
+			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
+			  bool isInternal);
+
 static AclMode
 ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 						 AclMode privileges, Oid objectId, Oid grantorId,
@@ -37,4 +44,11 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     Oid *existing_relation_id)
 {
 
+}
+
+ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
+			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
+			  bool isInternal)
+{
+	
 }

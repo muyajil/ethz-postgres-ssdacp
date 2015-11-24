@@ -1,7 +1,7 @@
 #ifndef SSDACP_H
 #define SSDACP_H
 
-#ifndef SSDACP_ACTIVATE 1
+#define SSDACP_ACTIVATE 1
 
 extern Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,

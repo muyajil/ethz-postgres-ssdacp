@@ -32,6 +32,12 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal);
 
+/* Declaration of function that checks non_utility commands
+ * 
+ */
+
+bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+
 static AclMode
 ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 						 AclMode privileges, Oid objectId, Oid grantorId,
@@ -50,6 +56,11 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
+{
+
+}
+
+bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
 
 }

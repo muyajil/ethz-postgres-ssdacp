@@ -59,7 +59,7 @@
 #include "utils/rls.h"
 #include "utils/snapmgr.h"
 #include "utils/tqual.h"
-
+#include "catalog/ssdacp.h"
 
 /* Hooks for plugins to get control in ExecutorStart/Run/Finish/End */
 ExecutorStart_hook_type ExecutorStart_hook = NULL;

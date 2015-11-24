@@ -543,7 +543,7 @@ bool
 ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
 	if(SSDACP_ACTIVATE){
-		ssdacp_ExecCheckRTPerms(rangeTable, ereport_on_violation);
+		return ssdacp_ExecCheckRTPerms(rangeTable, ereport_on_violation);
 	} else {
 	ListCell   *l;
 	bool		result = true;

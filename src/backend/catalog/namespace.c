@@ -525,7 +525,7 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									 Oid *existing_relation_id)
 {
 	if(SSDACP_ACTIVATE){
-		ssdacp_RangeVarGetAndCheckCreationNamespace(relation, lockmode, existing_relation_id);
+		return ssdacp_RangeVarGetAndCheckCreationNamespace(relation, lockmode, existing_relation_id);
 	} else {
 	uint64		inval_count;
 	Oid			relid;

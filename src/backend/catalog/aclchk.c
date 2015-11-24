@@ -219,7 +219,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 						 AttrNumber att_number, const char *colname)
 {
     if(SSDACP_ACTIVATE){
-        ssdacp_restrict_and_check_grant(is_grant, avail_goptions, all_privs,
+        return ssdacp_restrict_and_check_grant(is_grant, avail_goptions, all_privs,
                                         privileges, objectId, grantorId, objkind,
                                         objname, att_number, colname);
     } else {
@@ -306,7 +306,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 		{
 			if (objkind == ACL_KIND_COLUMN && colname)
 				ereport(WARNING,
-						(errcode(ERRCODE_WARNING_PRIVILEGE_NOT_GRANTED),
+errcode(ERRCODE_WARNING_PRIVILEGE_NOT_GRANTED),
 						 errmsg("no privileges were granted for column \"%s\" of relation \"%s\"",
 								colname, objname)));
 			else

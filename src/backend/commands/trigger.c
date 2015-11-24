@@ -139,7 +139,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  bool isInternal)
 {
     if(SSDACP_ACTIVATE){
-        ssdacp_CreateTrigger(stmt, queryString, relOid, refRelOid, constraintOid, indexOid, isInternal);
+        return ssdacp_CreateTrigger(stmt, queryString, relOid, refRelOid, constraintOid, indexOid, isInternal);
     } else {
 	int16		tgtype;
 	int			ncolumns;

@@ -17,7 +17,8 @@ static AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_gopt
 						 AttrNumber att_number, const char *colname);
 
 /* Declaration of function that checks CREATE for relations
- * 
+ * If the create is allowed this function returns the OID of the target namespace
+ * If the create is not allowed this function signals an error
  */
 Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,

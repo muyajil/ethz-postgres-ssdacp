@@ -7,10 +7,16 @@ typedef enum {INSERT, DELETE, SELECT, GRANT, REVOKE, CREATE_TRIGGER, CREATE_RELA
 
 #define SSDACP_ACTIVATE 1
 
+typedef struct ac_create_relation_data {
+	RangeVar *relation;
+	LOCKMODE lockmode;
+	Oid *existing_relation_id;
+} ac_create_relation_data;
+
 typedef struct ac_decision_data {
 	bool trigger; /* Trigger Flag, TRUE if inside trigger */
 	command_type command; /* Flag that indicates the command that was used */
-	RangeVar *relation; /* If command == CREATE_RELATION we need to set this */
+	ac_create_relation_data create_data; /* If (command == CREATE_RELATION) we need to set this */
 } ac_decision_data;
 
 const struct AC_DECISION_DATA_DEFAULT {FALSE, NULL, NULL};

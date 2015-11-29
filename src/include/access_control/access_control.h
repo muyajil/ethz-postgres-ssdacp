@@ -44,20 +44,36 @@ typedef struct ac_decision_data {
 
 const struct AC_DECISION_DATA_DEFAULT {FALSE, NULL, NULL, NULL, NULL};
 
+/*
+ * If allowed return oid of target namespace
+ * If not allowed aclcheck_error
+ */
 extern Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,
 									     Oid *existing_relation_id);
 
+/*
+ * If allowed return current privileges
+ * If not allowed aclcheck_error
+ */
 extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
 						 bool all_privs, AclMode privileges,
 						 Oid objectId, Oid grantorId,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname);
 
+/*
+ * If allowed return address of created trigger
+ * If not allowed aclcheck_error
+ */
 extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal);
 
+/*
+ * If allowed return true
+ * If not allowed return false
+ */
 extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
 
 #endif /* SSDACP_H */

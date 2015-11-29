@@ -90,12 +90,10 @@ extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_gopt
 						 AttrNumber att_number, const char *colname);
 
 /*
- * If allowed return NULL
+ * If allowed do nothing
  * If not allowed aclcheck_error
  */
-extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
-			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
-			  bool isInternal);
+extern void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclResult *aclresult);
 
 /*
  * If allowed return true

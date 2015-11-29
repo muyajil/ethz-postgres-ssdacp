@@ -524,106 +524,22 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									 LOCKMODE lockmode,
 									 Oid *existing_relation_id)
 {
-	if(SSDACP_ACTIVATE){
-		return ssdacp_RangeVarGetAndCheckCreationNamespace(relation, lockmode, existing_relation_id);
-	} else {
-	uint64		inval_count;
-	Oid			relid;
-	Oid			oldrelid = InvalidOid;
-	Oid			nspid;
-	Oid			oldnspid = InvalidOid;
-	bool		retry = false;
+	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
 
-	/*
-	 * We check the catalog name and then ignore it.
-	 */
-	if (relation->catalogname)
-	{
-		if (strcmp(relation->catalogname, get_database_name(MyDatabaseId)) != 0)
-			ereport(ERROR,
-					(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-					 errmsg("cross-database references are not implemented: \"%s.%s.%s\"",
-							relation->catalogname, relation->schemaname,
-							relation->relname)));
-	}
+	/* Set the command field */
+	decision_data.command = CREATE_RELATION;
 
-	/*
-	 * As in RangeVarGetRelidExtended(), we guard against concurrent DDL
-	 * operations by tracking whether any invalidation messages are processed
-	 * while we're doing the name lookups and acquiring locks.  See comments
-	 * in that function for a more detailed explanation of this logic.
-	 */
-	for (;;)
-	{
-		AclResult	aclresult;
+	/* Initialize create_relation_data with arguments */
+	ac_create_relation_data create_relation_data = {relation, lockmode, existing_relation_id};
 
-		inval_count = SharedInvalidMessageCounter;
+	/* Assign pointer to the struct in decision_data */
+	decision_data.create_relation_data = &create_relation_data;
 
-		/* Look up creation namespace and check for existing relation. */
-		nspid = RangeVarGetCreationNamespace(relation);
-		Assert(OidIsValid(nspid));
-		if (existing_relation_id != NULL)
-			relid = get_relname_relid(relation->relname, nspid);
-		else
-			relid = InvalidOid;
+	/* Call authorized and get return data */
+	ac_return_data return_data = authorized(&decision_data);
 
-		/*
-		 * In bootstrap processing mode, we don't bother with permissions or
-		 * locking.  Permissions might not be working yet, and locking is
-		 * unnecessary.
-		 */
-		if (IsBootstrapProcessingMode())
-			break;
-
-		/* Check namespace permissions. */
-		aclresult = pg_namespace_aclcheck(nspid, GetUserId(), ACL_CREATE);
-		if (aclresult != ACLCHECK_OK)
-			aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
-						   get_namespace_name(nspid));
-
-		if (retry)
-		{
-			/* If nothing changed, we're done. */
-			if (relid == oldrelid && nspid == oldnspid)
-				break;
-			/* If creation namespace has changed, give up old lock. */
-			if (nspid != oldnspid)
-				UnlockDatabaseObject(NamespaceRelationId, oldnspid, 0,
-									 AccessShareLock);
-			/* If name points to something different, give up old lock. */
-			if (relid != oldrelid && OidIsValid(oldrelid) && lockmode != NoLock)
-				UnlockRelationOid(oldrelid, lockmode);
-		}
-
-		/* Lock namespace. */
-		if (nspid != oldnspid)
-			LockDatabaseObject(NamespaceRelationId, nspid, 0, AccessShareLock);
-
-		/* Lock relation, if required if and we have permission. */
-		if (lockmode != NoLock && OidIsValid(relid))
-		{
-			if (!pg_class_ownercheck(relid, GetUserId()))
-				aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
-							   relation->relname);
-			if (relid != oldrelid)
-				LockRelationOid(relid, lockmode);
-		}
-
-		/* If no invalidation message were processed, we're done! */
-		if (inval_count == SharedInvalidMessageCounter)
-			break;
-
-		/* Something may have changed, so recheck our work. */
-		retry = true;
-		oldrelid = relid;
-		oldnspid = nspid;
-	}
-
-	RangeVarAdjustRelationPersistence(relation, nspid);
-	if (existing_relation_id != NULL)
-		*existing_relation_id = relid;
-	return nspid;
-}
+	/* Return what we got from authorized */
+	return return_data.target_namespace;
 }
 /*
  * Adjust the relpersistence for an about-to-be-created relation based on the

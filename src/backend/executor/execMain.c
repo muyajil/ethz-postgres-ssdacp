@@ -546,50 +546,6 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 }
 
 
-
-/*
- * ExecCheckRTEPermsModified
- *		Check INSERT or UPDATE access permissions for a single RTE (these
- *		are processed uniformly).
- */
-static bool
-ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
-						  AclMode requiredPerms)
-{
-	int			col = -1;
-
-	/*
-	 * When the query doesn't explicitly update any columns, allow the query
-	 * if we have permission on any column of the rel.  This is to handle
-	 * SELECT FOR UPDATE as well as possible corner cases in UPDATE.
-	 */
-	if (bms_is_empty(modifiedCols))
-	{
-		if (pg_attribute_aclcheck_all(relOid, userid, requiredPerms,
-									  ACLMASK_ANY) != ACLCHECK_OK)
-			return false;
-	}
-
-	while ((col = bms_next_member(modifiedCols, col)) >= 0)
-	{
-		/* bit #s are offset by FirstLowInvalidHeapAttributeNumber */
-		AttrNumber	attno = col + FirstLowInvalidHeapAttributeNumber;
-
-		if (attno == InvalidAttrNumber)
-		{
-			/* whole-row reference can't happen here */
-			elog(ERROR, "whole-row update is not implemented");
-		}
-		else
-		{
-			if (pg_attribute_aclcheck(relOid, attno, userid,
-									  requiredPerms) != ACLCHECK_OK)
-				return false;
-		}
-	}
-	return true;
-}
-
 /*
  * Check that the query does not imply any writes to non-temp tables;
  * unless we're in parallel mode, in which case don't even allow writes

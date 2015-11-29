@@ -57,7 +57,7 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 #include "utils/tuplestore.h"
-#include "catalog/ssdacp.h"
+#include "access_control.h"
 
 /* GUC variables */
 int			SessionReplicationRole = SESSION_REPLICATION_ROLE_ORIGIN;
@@ -263,23 +263,21 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	}
 
 	/* permission checks */
-	if (!isInternal)
-	{
-		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
-									  ACL_TRIGGER);
-		if (aclresult != ACLCHECK_OK)
-			aclcheck_error(aclresult, ACL_KIND_CLASS,
-						   RelationGetRelationName(rel));
 
-		if (OidIsValid(constrrelid))
-		{
-			aclresult = pg_class_aclcheck(constrrelid, GetUserId(),
-										  ACL_TRIGGER);
-			if (aclresult != ACLCHECK_OK)
-				aclcheck_error(aclresult, ACL_KIND_CLASS,
-							   get_rel_name(constrrelid));
-		}
-	}
+	/* Construct decision_data from Default */
+	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
+
+	/* Set the command field */
+	decision_data.command = CREATE_TRIGGER;
+
+	/* Initialize create_trigger_data with arguments */
+	ac_create_trigger_data create_trigger_data = {isInternal, rel, constrrelid, &aclresult};
+
+	/* Assign pointer to data in decision_data */
+	decision_data.create_trigger_data = create_trigger_data;
+
+	/* Call authorized, here we do not care about the return value, should even be NULL here */
+	authorized(&decision_data);
 
 	/* Compute tgtype */
 	TRIGGER_CLEAR_TYPE(tgtype);

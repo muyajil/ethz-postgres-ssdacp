@@ -201,5 +201,26 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 
 bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
+	ListCell   *l;
+	bool		result = true;
 
+	foreach(l, rangeTable)
+	{
+		RangeTblEntry *rte = (RangeTblEntry *) lfirst(l);
+
+		result = ExecCheckRTEPerms(rte);
+		if (!result)
+		{
+			Assert(rte->rtekind == RTE_RELATION);
+			if (ereport_on_violation)
+				aclcheck_error(ACLCHECK_NO_PRIV, ACL_KIND_CLASS,
+							   get_rel_name(rte->relid));
+			return false;
+		}
+	}
+
+	if (ExecutorCheckPerms_hook)
+		result = (*ExecutorCheckPerms_hook) (rangeTable,
+											 ereport_on_violation);
+	return result;
 }

@@ -2,7 +2,24 @@
 #define SSDACP_H
 
 /* Enum for command that was issued */
-typedef enum {INSERT, DELETE, SELECT, GRANT, REVOKE, CREATE_TRIGGER, CREATE_RELATION} command_type;
+typedef enum {
+	INSERT, 
+	DELETE, 
+	SELECT, 
+	GRANT, 
+	REVOKE, 
+	CREATE_TRIGGER, 
+	CREATE_RELATION
+} command_type;
+
+/* Union for the return value of authorized 
+ * Union is NULL if CREATE TRIGGER is allowed
+ */
+typedef union ac_return_data {
+	Oid target_namespace; /* Returned if CREATE is authorized */
+	AclMode current_privileges; /* Returned if GRANT is authorized */
+	bool execute; /* Returned if Non-utility command is authorized */
+} ac_return_data;
 
 
 #define SSDACP_ACTIVATE 1
@@ -73,7 +90,7 @@ extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_gopt
 						 AttrNumber att_number, const char *colname);
 
 /*
- * If allowed do nothing
+ * If allowed return NULL
  * If not allowed aclcheck_error
  */
 extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
@@ -85,5 +102,13 @@ extern ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *quer
  * If not allowed return false
  */
 extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+
+/*
+ * Declaration of the interface authorized
+ * Input arguments is all data needed to make the decision
+ * The return type depends on the type of command issued -> see typedef ac_return_data
+ *
+ */
+ extern ac_return_data authorized(ac_decision_data decision_data);
 
 #endif /* SSDACP_H */

@@ -108,6 +108,6 @@ extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
  * The return type depends on the type of command issued -> see typedef ac_return_data
  *
  */
- extern ac_return_data authorized(ac_decision_data *decision_data);
+extern ac_return_data authorized(ac_decision_data *decision_data);
 
 #endif /* SSDACP_H */

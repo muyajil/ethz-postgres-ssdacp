@@ -1,17 +1,19 @@
 #ifndef SSDACP_H
 #define SSDACP_H
 
-//Enum for command that was issued
+/* Enum for command that was issued */
 typedef enum {INSERT, DELETE, SELECT, GRANT, REVOKE, CREATE_TRIGGER, CREATE_RELATION} command_type;
 
 
 #define SSDACP_ACTIVATE 1
 
 typedef struct ac_decision_data {
-	bool trigger; //Trigger Flag, TRUE if inside trigger
-
-
+	bool trigger; /* Trigger Flag, TRUE if inside trigger */
+	command_type command; /* Flag that indicates the command that was used */
+	RangeVar *relation; /* If command == CREATE_RELATION we need to set this */
 } ac_decision_data;
+
+const struct AC_DECISION_DATA_DEFAULT {FALSE, NULL, NULL};
 
 extern Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,

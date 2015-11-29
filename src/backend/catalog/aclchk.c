@@ -244,7 +244,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
     /* assign pointer to the struct in decision_data */
     decision_data.grant_data = &grant_data;
 
-    /* Call authorize and get return data */
+    /* Call authorized and get return data */
     ac_return_data return_data = authorized(&decision_data);
 
     /* Return what we got from authorized */

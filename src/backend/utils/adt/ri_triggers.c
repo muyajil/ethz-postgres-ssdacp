@@ -56,7 +56,7 @@
 #include "utils/snapmgr.h"
 #include "utils/syscache.h"
 #include "utils/tqual.h"
-
+#include "nodes/nodes.h"
 
 /* ----------
  * Local definitions
@@ -2306,7 +2306,8 @@ RI_Initial_Check(Trigger *trigger, Relation fk_rel, Relation pk_rel)
 		fkrte->selectedCols = bms_add_member(fkrte->selectedCols, attno);
 	}
 
-	if (!ExecCheckRTPerms(list_make2(fkrte, pkrte), false))
+	CmdType operation = CMD_NOTHING;
+	if (!ExecCheckRTPerms(list_make2(fkrte, pkrte), false, operation))
 		return false;
 
 	/*

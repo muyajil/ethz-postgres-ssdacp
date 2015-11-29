@@ -436,7 +436,9 @@ intorel_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 		rte->insertedCols = bms_add_member(rte->insertedCols,
 								attnum - FirstLowInvalidHeapAttributeNumber);
 
-	ExecCheckRTPerms(list_make1(rte), true);
+	CmdType operation = CMD_NOTHING;
+
+	ExecCheckRTPerms(list_make1(rte), true operaion);
 
 	/*
 	 * Make sure the constructed table does not have RLS enabled.

@@ -848,7 +848,8 @@ DoCopy(const CopyStmt *stmt, const char *queryString, uint64 *processed)
 			else
 				rte->selectedCols = bms_add_member(rte->selectedCols, attno);
 		}
-		ExecCheckRTPerms(range_table, true);
+		CmdType operation = CMD_NOTHING;
+		ExecCheckRTPerms(range_table, true, operation);
 
 		/*
 		 * Permission check for row security policies.

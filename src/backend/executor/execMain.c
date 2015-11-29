@@ -59,7 +59,7 @@
 #include "utils/rls.h"
 #include "utils/snapmgr.h"
 #include "utils/tqual.h"
-#include "catalog/ssdacp.h"
+#include "access_control.h"
 
 /* Hooks for plugins to get control in ExecutorStart/Run/Finish/End */
 ExecutorStart_hook_type ExecutorStart_hook = NULL;
@@ -540,9 +540,30 @@ ExecutorRewind(QueryDesc *queryDesc)
  * See rewrite/rowsecurity.c.
  */
 bool
-ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
+ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 {
-	
+	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT; /* Construct from default values */
+
+	/* find out what type of query was run, leave DEFAULT if no match*/
+	if(command == CMD_SELECT){
+		decision_data.command = SELECT;
+	} else if (command == CMD_INSERT){
+		decision_data.command = INSERT;
+	} else if (command == CMD_DELETE){
+		decision_data.command = DELETE;
+	}
+
+	/* Initialize nutility_data with arguments */
+	ac_nutility_data = {rangeTable, ereport_on_violation};
+
+	/* Assign pointer to the data in decision_data */
+	decision_data.nutility_data = &nutility_data;
+
+	/* Call authorized and get return data */
+	ac_return_data return_data = authorized(&decision_data);
+
+	/* Return what we got from authorize */
+	return return_data.execute;
 }
 
 
@@ -608,7 +629,7 @@ InitPlan(QueryDesc *queryDesc, int eflags)
 	/*
 	 * Do permissions checks
 	 */
-	ExecCheckRTPerms(rangeTable, true);
+	ExecCheckRTPerms(rangeTable, true, operation);
 
 	/*
 	 * initialize the node's execution state

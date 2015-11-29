@@ -1,7 +1,17 @@
 #ifndef SSDACP_H
 #define SSDACP_H
 
+//Enum for command that was issued
+typedef enum {INSERT, DELETE, SELECT, GRANT, REVOKE, CREATE_TRIGGER, CREATE_RELATION} command_type;
+
+
 #define SSDACP_ACTIVATE 1
+
+typedef struct ac_decision_data {
+	bool trigger; //Trigger Flag, TRUE if inside trigger
+
+
+} ac_decision_data;
 
 extern Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,

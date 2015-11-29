@@ -64,10 +64,10 @@ typedef struct ac_create_trigger_data
 typedef struct ac_decision_data {
 	bool trigger; /* Trigger Flag, TRUE if inside trigger */
 	command_type command; /* Flag that indicates the command that was used */
-	ac_create_relation_data create_relation_data; /* If (command == CREATE_RELATION) this cannot be NULL */
-	ac_grant_data grant_data; /* If (command == GRANT || command == REVOKE) this cannot be NULL */
-	ac_nutility_data nutility_data; /* If (command == INSERT || command == DELETE || command == SELECT) this cannot be NULL */
-	ac_create_trigger_data create_trigger_data; /* If (command == CREATE_TRIGGER) this cannot be NULL */
+	ac_create_relation_data *create_relation_data; /* If (command == CREATE_RELATION) this cannot be NULL */
+	ac_grant_data *grant_data; /* If (command == GRANT || command == REVOKE) this cannot be NULL */
+	ac_nutility_data *nutility_data; /* If (command == INSERT || command == DELETE || command == SELECT) this cannot be NULL */
+	ac_create_trigger_data *create_trigger_data; /* If (command == CREATE_TRIGGER) this cannot be NULL */
 } ac_decision_data;
 
 const struct AC_DECISION_DATA_DEFAULT {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
@@ -108,6 +108,6 @@ extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
  * The return type depends on the type of command issued -> see typedef ac_return_data
  *
  */
- extern ac_return_data authorized(ac_decision_data decision_data);
+ extern ac_return_data authorized(ac_decision_data *decision_data);
 
 #endif /* SSDACP_H */

@@ -35,10 +35,10 @@ void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclRes
 
 /* Declaration of function that checks non_utility commands
  * If the command is allowed this function returns true
- * If the command is not allowed this function returns false
+ * If the command is not allowed this function returns false and signals an error
  */
 
-bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
 
 /* Declaration of authorized interface
  * Here we need to check what kind of command we are dealing with and pass the args
@@ -69,7 +69,7 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 
 }
 
-bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
+bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
 
 }

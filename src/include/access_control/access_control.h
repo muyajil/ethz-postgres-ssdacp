@@ -98,9 +98,9 @@ extern void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid,
 
 /*
  * If allowed return true
- * If not allowed return false
+ * If not allowed return false and aclcheck_error
  */
-extern bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+extern bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
 
 /*
  * Declaration of the interface authorized

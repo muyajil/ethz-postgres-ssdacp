@@ -35,10 +35,10 @@ void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclRes
 
 /* Declaration of function that checks non_utility commands
  * If the command is allowed this function returns true
- * If the command is not allowed this function returns false
+ * If the command is not allowed this function returns false and signals an error
  */
 
-bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
 
 /* Declaration of authorized interface
  * Here we need to check what kind of command we are dealing with and pass the args
@@ -53,25 +53,36 @@ ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname)
 {
+	/* Signal an errro in any case */
+	aclcheck_error(ACLCHECK_NO_PRIV, objkind, objname);
+	return NULL;
 }
 
 Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     LOCKMODE lockmode,
 									     Oid *existing_relation_id)
 {
-
+	/* Need to set aclresult to pass to aclcheck_error */
+	aclresult = pg_namespace_aclcheck(nspid, GetUserId(), ACL_CREATE);
+	/* Signal error in any case */
+	aclcheck_error(aclresult, ACL_KIND_NAMESPACE, get_namespace_name(nspid));
+	return NULL;
 }
 
 ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
 {
-
+	/* Signal an error in any case */
+	aclcheck_error(aclresult, ACL_KIND_CLASS, RelationGetRelationName(rel));
+	return NULL;
 }
 
-bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
+bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
-
+	/* Always return false, and signal error */
+	aclcheck_error(ACLCHECK_NO_PRIV, ACL_KIND_CLASS, get_rel_name(rte->relid))
+	return false;
 }
 
 ac_return_data authorized(ac_decision_data *decision_data)

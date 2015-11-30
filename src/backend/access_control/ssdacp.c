@@ -1,4 +1,4 @@
-#include "catalog/ssdacp.h"
+#include "access_control.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
@@ -27,12 +27,11 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									     Oid *existing_relation_id);
 
 /* Declaration of function that checks CREATE for triggers
- * If the create trigger is allowed this function returns the address of the created trigger
+ * If the create trigger is allowed this function does nothing
  * If the create trigger is not allowed this function signals an error
  */
-ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
-			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
-			  bool isInternal);
+void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclResult *aclresult);
+
 
 /* Declaration of function that checks non_utility commands
  * If the command is allowed this function returns true
@@ -40,6 +39,13 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
  */
 
 bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
+
+/* Declaration of authorized interface
+ * Here we need to check what kind of command we are dealing with and pass the args
+ * to the respective function.
+ * We also need to set the return value union and return that further up.
+ */
+ac_return_data authorized(ac_decision_data *decision_data);
 
 static AclMode
 ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
@@ -64,6 +70,11 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 }
 
 bool ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
+{
+
+}
+
+ac_return_data authorized(ac_decision_data *decision_data)
 {
 
 }

@@ -545,6 +545,10 @@ ac_return_data authorized(ac_decision_data *decision_data){
 		 * This means that one of our functions got called by a function that does
 		 * something else than we actually support.
 		 * Here we need to define what happens!
+		 * A kind of hacky solution would be to still include the standard implementations
+		 * as subfunctions here and just call those. Then we could use the authorized 
+		 * interface everywhere and step by step replace the standard implementations
+		 * by ours.
 		 */
 	}
 

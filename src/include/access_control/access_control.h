@@ -70,7 +70,7 @@ typedef struct ac_decision_data {
 	ac_create_trigger_data *create_trigger_data; /* If (command == CREATE_TRIGGER) this cannot be NULL */
 } ac_decision_data;
 
-const struct AC_DECISION_DATA_DEFAULT {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
+const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
 
 /*
  * If allowed return oid of target namespace

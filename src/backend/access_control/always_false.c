@@ -53,7 +53,7 @@ ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname)
 {
-	/* Signal an errro in any case */
+	/* Signal an error in any case, should interrupt execution */
 	aclcheck_error(ACLCHECK_NO_PRIV, objkind, objname);
 	return NULL;
 }
@@ -64,7 +64,7 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 {
 	/* Need to set aclresult to pass to aclcheck_error */
 	aclresult = pg_namespace_aclcheck(nspid, GetUserId(), ACL_CREATE);
-	/* Signal error in any case */
+	/* Signal error in any case, should interrupt execution */
 	aclcheck_error(aclresult, ACL_KIND_NAMESPACE, get_namespace_name(nspid));
 	return NULL;
 }
@@ -73,16 +73,20 @@ ObjectAddress ssdacp_CreateTrigger(CreateTrigStmt *stmt, const char *queryString
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
 {
-	/* Signal an error in any case */
+	/* Signal an error in any case, should interrupt execution and return nothing */
 	aclcheck_error(aclresult, ACL_KIND_CLASS, RelationGetRelationName(rel));
 	return NULL;
 }
 
 bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
 {
-	/* Always return false, and signal error */
-	aclcheck_error(ACLCHECK_NO_PRIV, ACL_KIND_CLASS, get_rel_name(rte->relid))
-	return false;
+	/* Signal error if ereport_on_violation */
+	if(ereport_on_violation){
+		aclcheck_error(ACLCHECK_NO_PRIV, ACL_KIND_CLASS, get_rel_name(rte->relid));
+	/* if not then simply return false */
+	} else {
+		return false;
+	}
 }
 
 ac_return_data authorized(ac_decision_data *decision_data)

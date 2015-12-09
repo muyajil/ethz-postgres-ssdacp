@@ -73,36 +73,6 @@ typedef struct ac_decision_data {
 const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
 
 /*
- * If allowed return oid of target namespace
- * If not allowed aclcheck_error
- */
-extern Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
-									     LOCKMODE lockmode,
-									     Oid *existing_relation_id);
-
-/*
- * If allowed return current privileges
- * If not allowed aclcheck_error
- */
-extern AclMode ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
-						 bool all_privs, AclMode privileges,
-						 Oid objectId, Oid grantorId,
-						 AclObjectKind objkind, const char *objname,
-						 AttrNumber att_number, const char *colname);
-
-/*
- * If allowed do nothing
- * If not allowed aclcheck_error
- */
-extern void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclResult *aclresult);
-
-/*
- * If allowed return true
- * If not allowed return false and aclcheck_error
- */
-extern bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
-
-/*
  * Declaration of the interface authorized
  * Input arguments is all data needed to make the decision
  * The return type depends on the type of command issued -> see typedef ac_return_data

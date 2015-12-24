@@ -1,12 +1,5 @@
-#include "access_control.h"
-#include "postgres_ext.h"
-#include "nodes/parsenodes.h"
-#include "utils/acl.h"
-#include "access/attnum.h"
-#include "storage/lockdefs.h"
-#include "primnodes.h"
-#include "nodes/pg_list.h"
-#include "c.h"
+#include "access_control/access_control.h"
+#include "access_control/context.h"
 
 /* Declaration of authorized interface
  * Here we need to check what kind of command we are dealing with and pass the args

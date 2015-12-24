@@ -1,12 +1,4 @@
-#include "access_control.h"
-#include "postgres_ext.h"
-#include "nodes/parsenodes.h"
-#include "utils/acl.h"
-#include "access/attnum.h"
-#include "storage/lockdefs.h"
-#include "primnodes.h"
-#include "nodes/pg_list.h"
-#include "c.h"
+#include "access_control/access_control.h"
 
 /* Declaration of function that checks GRANT
  * If the grant is allowed this function returns the current privileges

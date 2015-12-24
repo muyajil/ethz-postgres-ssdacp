@@ -21,6 +21,9 @@ typedef struct ac_context_stack{
 	int free_slots;
 } ac_context_stack;
 
+/* The global context stack */
+extern ac_context_stack context_stack;
+
 /* Stack init method */
 extern ac_context_stack context_stack_init();
 

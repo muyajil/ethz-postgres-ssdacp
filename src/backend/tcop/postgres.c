@@ -3582,6 +3582,10 @@ PostgresMain(int argc, char *argv[],
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
 
+	/* Setup context stack */
+	ac_context *array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context));
+	ac_context_stack context_stack = {array, NULL, INIT_STACK_SIZE, INIT_STACK_SIZE};
+
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)
 	{

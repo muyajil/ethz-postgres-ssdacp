@@ -9,7 +9,7 @@
 typedef struct ac_context{
 	Oid user;
 	Oid invoker;
-	char *command;
+	String command;
 	Oid trigger;
 } ac_context;
 
@@ -24,13 +24,10 @@ typedef struct ac_context_stack{
 /* The global context stack */
 extern ac_context_stack context_stack;
 
-/* Stack init method */
-extern ac_context_stack context_stack_init();
-
 /* Stack push method */
-extern void ac_context_push(*ac_context_stack stack, *ac_context context);
+extern void ac_context_push(*ac_context context);
 
 /* Stack pop method */
-extern ac_context *ac_context_pop(*ac_context_stack stack);
+extern ac_context *ac_context_pop();
 
 #endif /* CONTEXT_H */

@@ -56,7 +56,7 @@
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
 #include "utils/syscache.h"
-#include "catalog/ssdacp.h"
+#include "access_control/access_control.h"
 
 
 /*
@@ -524,19 +524,27 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 									 LOCKMODE lockmode,
 									 Oid *existing_relation_id)
 {
-	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
+	/* Declaration of variables */
+	ac_create_relation_data create_relation_data;
+	ac_return_data return_data;
+	ac_decision_data decision_data;
+
+	/* Initialize decision_data with default values */
+	decision_data = AC_DECISION_DATA_DEFAULT;
 
 	/* Set the command field */
 	decision_data.command = CREATE_RELATION;
 
 	/* Initialize create_relation_data with arguments */
-	ac_create_relation_data create_relation_data = {relation, lockmode, existing_relation_id};
+	create_relation_data.relation = relation;
+	create_relation_data.lockmode = lockmode;
+	create_relation_data.existing_relation_id = existing_relation_id;
 
 	/* Assign pointer to the struct in decision_data */
 	decision_data.create_relation_data = &create_relation_data;
 
 	/* Call authorized and get return data */
-	ac_return_data return_data = authorized(&decision_data);
+	return_data = authorized(&decision_data);
 
 	/* Return what we got from authorized */
 	return return_data.target_namespace;

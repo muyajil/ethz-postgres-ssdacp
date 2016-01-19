@@ -6,7 +6,7 @@
 #include "utils/acl.h"
 #include "access/attnum.h"
 #include "storage/lockdefs.h"
-#include "primnodes.h"
+#include "nodes/primnodes.h"
 #include "nodes/pg_list.h"
 #include "c.h"
 
@@ -50,7 +50,7 @@ typedef struct ac_grant_data {
 	Oid grantorId;
 	AclObjectKind objkind;
 	const char *objname;
-	AttrNumber att_number;constrrelid
+	AttrNumber att_number;
 	const char *colname;
 } ac_grant_data;
 

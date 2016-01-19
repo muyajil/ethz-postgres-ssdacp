@@ -820,6 +820,7 @@ DoCopy(const CopyStmt *stmt, const char *queryString, uint64 *processed)
 		List	   *attnums;
 		ListCell   *cur;
 		RangeTblEntry *rte;
+		CmdType operation;
 
 		Assert(!stmt->query);
 
@@ -848,7 +849,8 @@ DoCopy(const CopyStmt *stmt, const char *queryString, uint64 *processed)
 			else
 				rte->selectedCols = bms_add_member(rte->selectedCols, attno);
 		}
-		CmdType operation = CMD_NOTHING;
+		
+		operation = CMD_NOTHING;
 		ExecCheckRTPerms(range_table, true, operation);
 
 		/*

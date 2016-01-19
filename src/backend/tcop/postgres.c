@@ -4023,7 +4023,7 @@ PostgresMain(int argc, char *argv[],
 		Oid current_user = GetUserId(); //Get the user
 		String command = input_message; //Get the command
 		Oid invoker = current_user; //Get the invoker (=user here)
-		Oid trigger = NULL; //Get the trigger (=NULL here)
+		Trigger *trigger = NULL; //Get the trigger (=NULL here)
 
 		ac_context context = {current_user, invoker, command, trigger};
 		ac_context_push(&context);

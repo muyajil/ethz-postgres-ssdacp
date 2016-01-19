@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include "postgres_ext.h"
+#include "reltrigger.h"
 
 #define INIT_STACK_SIZE 10
 
@@ -10,7 +11,7 @@ typedef struct ac_context{
 	Oid user;
 	Oid invoker;
 	String command;
-	Oid trigger;
+	Trigger *trigger;
 } ac_context;
 
 /* Context Stack Data Structure */

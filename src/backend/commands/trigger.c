@@ -1906,6 +1906,13 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 
 	pgstat_init_function_usage(&fcinfo, &fcusage);
 
+	/* Push context */
+	Oid current_user = GetUserId(); // Get the user
+	Trigger *trigger = trigdata->tg_trigger; // Get the trigger
+	
+	Oid invoker = NULL; // TODO: Check security definition of trigger
+	String command = NULL; // TODO: Check if the function defines a SQL query, if so get it in String form
+
 	MyTriggerDepth++;
 	PG_TRY();
 	{

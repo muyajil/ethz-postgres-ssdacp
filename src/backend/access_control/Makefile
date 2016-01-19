@@ -5,7 +5,10 @@
 #
 # IDENTIFICATION
 #    src/backend/access_control/Makefile
-#
+# 
+# USAGE
+# 	 To use another access control algorithm, just replace the oacp.o with 
+#	 desired implementation
 #-------------------------------------------------------------------------
 
 subdir = src/backend/access_control

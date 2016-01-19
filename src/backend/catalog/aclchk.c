@@ -64,7 +64,7 @@
 #include "utils/rel.h"
 #include "utils/syscache.h"
 #include "utils/tqual.h"
-#include "access_control.h"
+#include "access_control/access_control.h"
 
 /*
  * Internal format used by ALTER DEFAULT PRIVILEGES.

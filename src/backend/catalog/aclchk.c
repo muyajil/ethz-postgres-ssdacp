@@ -234,18 +234,16 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
     }
 
     /* Initialize grant_data with arguments */
-    grant_data = {
-    	is_grant, 
-    	avail_goptions, 
-    	all_privs, 
-    	privileges, 
-    	objectId, 
-    	grantorId, 
-    	objkind, 
-    	objname,
-    	att_number,
-    	colname
-    };
+    grant_data.is_grant = is_grant;
+    grant_data.avail_goptions = avail_goptions;
+    grant_data.all_privs = all_privs;
+    grant_data.privileges = privileges;
+    grant_data.objectId = objectId;
+    grant_data.grantorId = grantorId;
+    grant_data.objkind = objkind;
+    grant_data.objname = objname;
+    grant_data.att_number = att_number;
+    grant_data.colname = colname;
 
     /* assign pointer to the struct in decision_data */
     decision_data.grant_data = &grant_data;

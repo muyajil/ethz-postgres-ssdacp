@@ -218,7 +218,13 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname)
 {
-    ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT; /* Construct from default value */
+	/* Declarations of variables */
+	ac_decision_data decision_data;
+	ac_grant_data grant_data;
+
+    /* Construct from default value */
+    decision_data = AC_DECISION_DATA_DEFAULT; 
+
 
     /* Here we decide if its a GRANT or REVOKE based on is_grant */
     if(is_grant){
@@ -228,7 +234,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
     }
 
     /* Initialize grant_data with arguments */
-    ac_grant_data grant_data = {
+    grant_data = {
     	is_grant, 
     	avail_goptions, 
     	all_privs, 

@@ -57,7 +57,8 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 #include "utils/tuplestore.h"
-#include "access_control.h"
+#include "access_control/access_control.h"
+#include "access_control/context.h"
 
 /* GUC variables */
 int			SessionReplicationRole = SESSION_REPLICATION_ROLE_ORIGIN;
@@ -1913,6 +1914,8 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 	Oid invoker = NULL; // TODO: Check security definition of trigger
 	String command = NULL; // TODO: Check if the function defines a SQL query, if so get it in String form
 
+    //TODO: Push context
+
 	MyTriggerDepth++;
 	PG_TRY();
 	{
@@ -1921,10 +1924,12 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 	PG_CATCH();
 	{
 		MyTriggerDepth--;
+        //TODO: Pop Context
 		PG_RE_THROW();
 	}
 	PG_END_TRY();
 	MyTriggerDepth--;
+    //TODO: Pop Context
 
 	pgstat_end_function_usage(&fcusage, true);
 

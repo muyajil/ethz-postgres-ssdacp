@@ -501,13 +501,13 @@ ac_return_data authorized(ac_decision_data *decision_data){
 	ac_return_data return_data;
 
 	/* Based on the command type call the correct decision functions */
-	if(decision_data->command == CREATE_RELATION){
+	if(decision_data->ac_create_relation_data != NULL){
 		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
 			decision_data->create_relation_data->relation,
 			decision_data->create_relation_data->lockmode,
 			decision_data->create_relation_data->existing_relation_id);
 		return return_data;
-	} else if(decision_data->command == GRANT || decision_data->command == REVOKE){
+	} else if(decision_data->grant_data != NULL){
 		return_data.current_privileges = ssdacp_restrict_and_check_grant(
 			decision_data->grant_data->is_grant,
 			decision_data->grant_data->avail_goptions,
@@ -520,27 +520,21 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			decision_data->grant_data->att_number,
 			decision_data->grant_data->colname);
 		return return_data;
-	} else if(decision_data->command == CREATE_TRIGGER){
+	} else if(decision_data->create_trigger_data != NULL){
 		ssdacp_CreateTrigger(
 			decision_data->create_trigger_data->isInternal,
 			decision_data->create_trigger_data->rel,
 			decision_data->create_trigger_data->constrrelid,
 			decision_data->create_trigger_data->aclresult);
 		return NULL;
-	} else if(decision_data->command == INSERT || decision_data->command == SELECT || decision_data->command == DELETE){
+	} else if(decision_data->nutility_data != NULL){
 		return_data.execute = ssdacp_ExecCheckRTPerms(
 			decision_data->nutility_data->rangeTable,
 			decision_data->nutility_data->ereport_on_violation);
 		return return_data;
 	} else {
-		/* We get here if decision_data->command == default
-		 * This means that one of our functions got called by a function that does
-		 * something else than we actually support.
-		 * Here we need to define what happens!
-		 * A kind of hacky solution would be to still include the standard implementations
-		 * as subfunctions here and just call those. Then we could use the authorized 
-		 * interface everywhere and step by step replace the standard implementations
-		 * by ours.
+		/* We get here if decision_data->command == NULL
+		 * This should never happen.
 		 */
 	}
 

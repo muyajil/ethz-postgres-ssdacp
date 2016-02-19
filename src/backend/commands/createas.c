@@ -295,6 +295,7 @@ intorel_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 	ListCell   *lc;
 	int			attnum;
 	static char *validnsps[] = HEAP_RELOPT_NAMESPACES;
+	CmdType auth_op = CMD_NOTHING;
 
 	Assert(into != NULL);		/* else somebody forgot to set it */
 
@@ -436,9 +437,7 @@ intorel_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 		rte->insertedCols = bms_add_member(rte->insertedCols,
 								attnum - FirstLowInvalidHeapAttributeNumber);
 
-	CmdType operation = CMD_NOTHING;
-
-	ExecCheckRTPerms(list_make1(rte), true operaion);
+	ExecCheckRTPerms(list_make1(rte), true, auth_op);
 
 	/*
 	 * Make sure the constructed table does not have RLS enabled.

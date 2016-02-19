@@ -59,7 +59,7 @@
 #include "utils/rls.h"
 #include "utils/snapmgr.h"
 #include "utils/tqual.h"
-#include "access_control.h"
+#include "access_control/access_control.h"
 
 /* Hooks for plugins to get control in ExecutorStart/Run/Finish/End */
 ExecutorStart_hook_type ExecutorStart_hook = NULL;
@@ -82,8 +82,8 @@ static void ExecutePlan(EState *estate, PlanState *planstate,
 			long numberTuples,
 			ScanDirection direction,
 			DestReceiver *dest);
-static bool ExecCheckRTEPerms(RangeTblEntry *rte);
-static bool ExecCheckRTEPermsModified(Oid relOid, Oid userid,
+extern bool ExecCheckRTEPerms(RangeTblEntry *rte);
+extern bool ExecCheckRTEPermsModified(Oid relOid, Oid userid,
 						  Bitmapset *modifiedCols,
 						  AclMode requiredPerms);
 static void ExecCheckXactReadOnly(PlannedStmt *plannedstmt);

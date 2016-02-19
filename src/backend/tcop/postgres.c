@@ -4019,15 +4019,6 @@ PostgresMain(int argc, char *argv[],
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
 
-		/* Push context */
-		Oid current_user = GetUserId(); //Get the user
-		String command = input_message; //Get the command
-		Oid invoker = current_user; //Get the invoker (=user here)
-		Trigger *trigger = NULL; //Get the trigger (=NULL here)
-
-		ac_context context = {current_user, invoker, command, trigger};
-		ac_context_push(&context);
-
 		switch (firstchar)
 		{
 			case 'Q':			/* simple query */
@@ -4285,8 +4276,6 @@ PostgresMain(int argc, char *argv[],
 								firstchar)));
 		}
 
-		/* Pop Context */
-		ac_context_pop(); //Here we do not really care about the return value
 	}							/* end of input-reading loop */
 }
 

@@ -58,7 +58,6 @@
 #include "utils/tqual.h"
 #include "utils/tuplestore.h"
 #include "access_control/access_control.h"
-#include "access_control/context.h"
 
 /* GUC variables */
 int			SessionReplicationRole = SESSION_REPLICATION_ROLE_ORIGIN;
@@ -134,14 +133,13 @@ static void AfterTriggerEnlargeQueryState(void);
  * at all, but a foreign-key constraint.  This is a kluge for backwards
  * compatibility.
  */
+ 
+//TODO: Move code to oacp.c and implement authorized interface
 ObjectAddress
 CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			  Oid relOid, Oid refRelOid, Oid constraintOid, Oid indexOid,
 			  bool isInternal)
 {
-    if(SSDACP_ACTIVATE){
-        return ssdacp_CreateTrigger(stmt, queryString, relOid, refRelOid, constraintOid, indexOid, isInternal);
-    } else {
 	int16		tgtype;
 	int			ncolumns;
 	int16	   *columns;
@@ -167,6 +165,9 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	Oid			constrrelid = InvalidOid;
 	ObjectAddress myself,
 				referenced;
+	/* Construct decision_data from Default */
+	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
+	ac_create_trigger_data create_trigger_data;
 
 	if (OidIsValid(relOid))
 		rel = heap_open(relOid, ShareRowExclusiveLock);
@@ -265,17 +266,17 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 
 	/* permission checks */
 
-	/* Construct decision_data from Default */
-	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
-
 	/* Set the command field */
 	decision_data.command = CREATE_TRIGGER;
 
 	/* Initialize create_trigger_data with arguments */
-	ac_create_trigger_data create_trigger_data = {isInternal, rel, constrrelid, &aclresult};
+	create_trigger_data.isInternal = isInternal;
+	create_trigger_data.rel = rel;
+	create_trigger_data.constrrelid = constrrelid;
+	create_trigger_data.aclresult = &aclresult;
 
 	/* Assign pointer to data in decision_data */
-	decision_data.create_trigger_data = create_trigger_data;
+	decision_data.create_trigger_data = &create_trigger_data;
 
 	/* Call authorized, here we do not care about the return value, should even be NULL here */
 	authorized(&decision_data);
@@ -803,7 +804,6 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	heap_close(rel, NoLock);
 
 	return myself;
-}
 }
 
 
@@ -1907,15 +1907,6 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 
 	pgstat_init_function_usage(&fcinfo, &fcusage);
 
-	/* Push context */
-	Oid current_user = GetUserId(); // Get the user
-	Trigger *trigger = trigdata->tg_trigger; // Get the trigger
-	
-	Oid invoker = NULL; // TODO: Check security definition of trigger
-	String command = NULL; // TODO: Check if the function defines a SQL query, if so get it in String form
-
-    //TODO: Push context
-
 	MyTriggerDepth++;
 	PG_TRY();
 	{
@@ -1924,12 +1915,10 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 	PG_CATCH();
 	{
 		MyTriggerDepth--;
-        //TODO: Pop Context
 		PG_RE_THROW();
 	}
 	PG_END_TRY();
 	MyTriggerDepth--;
-    //TODO: Pop Context
 
 	pgstat_end_function_usage(&fcusage, true);
 

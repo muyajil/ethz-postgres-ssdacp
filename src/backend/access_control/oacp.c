@@ -535,4 +535,5 @@ ac_return_data authorized(ac_decision_data *decision_data){
 	} else {
 		return AC_RETURN_DATA_NULL;
 	}
+	return AC_RETURN_DATA_NULL;
 }

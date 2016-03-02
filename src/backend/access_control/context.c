@@ -1,3 +1,4 @@
+#include <stdlib>
 #include "access_control/context.h"
 
 /* Start declarations */

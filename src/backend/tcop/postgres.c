@@ -3565,6 +3565,13 @@ PostgresMain(int argc, char *argv[],
 	StringInfoData input_message;
 	sigjmp_buf	local_sigjmp_buf;
 	volatile bool send_ready_for_query = true;
+	ac_context *array;
+	ac_context_stack context_stack;
+	const char *query_string_ssdacp;
+	List *raw_parsetree_list_ssdacp;
+	Node *parsetree;
+	Query *parsed_query;
+	ac_context *context;
 
 	/* Initialize startup process environment if necessary. */
 	if (!IsUnderPostmaster)
@@ -3584,8 +3591,11 @@ PostgresMain(int argc, char *argv[],
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
 
 	/* Setup context stack */
-	ac_context *array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context));
-	ac_context_stack context_stack = {array, NULL, INIT_STACK_SIZE, INIT_STACK_SIZE};
+	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context));
+	context_stack.array = &array;
+	context_stack.top = NULL;
+	context_stack.size = INIT_STACK_SIZE;
+	context_stack.free_slots = INIT_STACK_SIZE;
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)
@@ -4020,16 +4030,14 @@ PostgresMain(int argc, char *argv[],
 			continue;
 
 		// Parse the query and get the parsetree
-		const char *query_string_ssdacp;
+
 		query_string_ssdacp = pq_getmsgstring(&input_message);
-		List *raw_parsetree_list_ssdacp;
 		raw_parsetree_list_ssdacp = raw_parser(query_string_ssdacp);
-		Node *parsetree = (Node *) raw_parsetree_list_ssdacp->head->data->ptr_value;
-		Query *parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
+		parsetree = (Node *) raw_parsetree_list_ssdacp->head->data;
+		parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
 
 
 		// Push to the stack
-		ac_context *context;
 		context.user = GetSessionUserId();
 		context.invoker = GetUserId();
 		context.query = parsed_query;

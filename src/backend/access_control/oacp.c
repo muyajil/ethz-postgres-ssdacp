@@ -532,10 +532,5 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			decision_data->nutility_data->rangeTable,
 			decision_data->nutility_data->ereport_on_violation);
 		return return_data;
-	} else {
-		/* We get here if decision_data->command == NULL
-		 * This should never happen.
-		 */
-	}
-
+	} 
 }

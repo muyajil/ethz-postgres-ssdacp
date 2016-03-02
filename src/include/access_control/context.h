@@ -1,7 +1,6 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-#include "executor/execdesc.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 

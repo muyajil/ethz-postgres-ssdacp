@@ -4019,6 +4019,23 @@ PostgresMain(int argc, char *argv[],
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
 
+		// Parse the query and get the parsetree
+		const char *query_string_ssdacp;
+		query_string_ssdacp = pq_getmsgstring(&input_message);
+		List *raw_parsetree_list_ssdacp;
+		raw_parsetree_list_ssdacp = raw_parser(query_string_ssdacp);
+		Node *parsetree = (Node *) raw_parsetree_list_ssdacp->head->data->ptr_value;
+		Query *parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
+
+
+		// Push to the stack
+		ac_context *context;
+		context.user = GetSessionUserId();
+		context.invoker = GetUserId();
+		context.query = parsed_query;
+
+		ac_context_push(context);
+
 		switch (firstchar)
 		{
 			case 'Q':			/* simple query */
@@ -4275,7 +4292,7 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
-
+		ac_context_pop(); // we don't need the return value here
 	}							/* end of input-reading loop */
 }
 

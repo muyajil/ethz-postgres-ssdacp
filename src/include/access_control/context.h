@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include "postgres_ext.h"
+#include "nodes/parsenodes.h"
 #include "executor/execdesc.h"
 
 #define INIT_STACK_SIZE 10
@@ -10,7 +11,7 @@
 typedef struct ac_context{
 	Oid user;
 	Oid invoker;
-	QueryDesc query_desc;
+	Query *query;
 } ac_context;
 
 /* Context Stack Data Structure */
@@ -20,6 +21,14 @@ typedef struct ac_context_stack{
 	int size;
 	int free_slots;
 } ac_context_stack;
+
+/* global 2d - map: view -> included in */
+
+/* global 2d - map: view -> includes */
+
+/* save maps command */
+
+/* load maps command */
 
 /* The global context stack */
 extern ac_context_stack context_stack;

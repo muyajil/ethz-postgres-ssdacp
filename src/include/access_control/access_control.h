@@ -1,6 +1,7 @@
 #ifndef SSDACP_H
 #define SSDACP_H
 
+#include "c.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
@@ -8,7 +9,7 @@
 #include "storage/lockdefs.h"
 #include "nodes/primnodes.h"
 #include "nodes/pg_list.h"
-#include "c.h"
+
 
 #define SSDACP_ACTIVATE 1
 

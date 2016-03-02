@@ -4045,9 +4045,9 @@ PostgresMain(int argc, char *argv[],
 			//Now parse this and get the query back
 			parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
 			// Push to the stack
-			context.user = GetSessionUserId();
-			context.invoker = GetUserId();
-			context.query = parsed_query;
+			context->user = GetSessionUserId();
+			context->invoker = GetUserId();
+			context->query = parsed_query;
 
 		ac_context_push(context);
 		}

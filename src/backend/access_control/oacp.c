@@ -501,7 +501,7 @@ ac_return_data authorized(ac_decision_data *decision_data){
 	ac_return_data return_data;
 
 	/* Based on the command type call the correct decision functions */
-	if(decision_data->ac_create_relation_data != NULL){
+	if(decision_data->create_relation_data != NULL){
 		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
 			decision_data->create_relation_data->relation,
 			decision_data->create_relation_data->lockmode,

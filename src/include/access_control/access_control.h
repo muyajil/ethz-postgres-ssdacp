@@ -115,4 +115,8 @@ extern AclMode pg_aclmask (
 	AclMaskHow how 
 	);
 
+// The next two functions are needed here, but defined in elog.c
+extern int errcode(int sqlerrcode);
+extern int errmsg (const char *fmt, ...); 	
+
 #endif /* SSDACP_H */

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "c.h"
+#include "postgres.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"

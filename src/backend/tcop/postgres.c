@@ -75,6 +75,8 @@
 #include "utils/timestamp.h"
 #include "mb/pg_wchar.h"
 #include "access_control/context.h"
+#include "nodes/parsenodes.h"
+#include "nodes/pg_list.h"
 
 
 /* ----------------
@@ -380,7 +382,7 @@ SocketBackend(StringInfo inBuf)
 			doing_extended_query_message = false;
 			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 			{
-				/* old style without length word; convert */
+				/* old style without length word; coparsetreenvert */
 				if (pq_getstring(inBuf))
 				{
 					if (IsTransactionState())
@@ -4029,20 +4031,25 @@ PostgresMain(int argc, char *argv[],
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
 
-		// Parse the query and get the parsetree
-
+		// Get the string from the input message
 		query_string_ssdacp = pq_getmsgstring(&input_message);
+
+		// Here we get a list back, in case there are multiple commands in the string
 		raw_parsetree_list_ssdacp = raw_parser(query_string_ssdacp);
-		parsetree = (Node *) raw_parsetree_list_ssdacp->head->data;
-		parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
 
-
-		// Push to the stack
-		context.user = GetSessionUserId();
-		context.invoker = GetUserId();
-		context.query = parsed_query;
+		// We loop through all the commands (mostly just once)
+		foreach(parsetree_item, raw_parsetree_list_ssdacp){
+			//Get the pointer to the node representing the parsetree
+			parsetree = (Node *) lfirst(parsetree_item);
+			//Now parse this and get the query back
+			parsed_query = parse_analyze(parsetree, query_string, NULL, 0);
+			// Push to the stack
+			context.user = GetSessionUserId();
+			context.invoker = GetUserId();
+			context.query = parsed_query;
 
 		ac_context_push(context);
+		}
 
 		switch (firstchar)
 		{

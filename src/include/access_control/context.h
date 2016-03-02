@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include "c.h"
+#include "postgres.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 

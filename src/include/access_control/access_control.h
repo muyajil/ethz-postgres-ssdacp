@@ -27,21 +27,21 @@ typedef enum {
 /* Union for the return value of authorized 
  * Union is NULL if CREATE TRIGGER is allowed
  */
-typedef union ac_return_data {
+typedef union ac_return_data_struct {
 	Oid target_namespace; /* Returned if CREATE is authorized */
 	AclMode current_privileges; /* Returned if GRANT is authorized */
 	bool execute; /* Returned if Non-utility command is authorized */
 } ac_return_data;
 
 /* Data needed for deciding on CREATE queries */
-typedef struct ac_create_relation_data {
+typedef struct ac_create_relation_data_struct {
 	RangeVar *relation;
 	LOCKMODE lockmode;
 	Oid *existing_relation_id;
 } ac_create_relation_data;
 
 /* Data needed for deciding on GRANT queries */
-typedef struct ac_grant_data {
+typedef struct ac_grant_data_struct {
 	bool is_grant;
 	AclMode avail_goptions;
 	bool all_privs;
@@ -55,21 +55,20 @@ typedef struct ac_grant_data {
 } ac_grant_data;
 
 /* Data needed for deciding on Non utility queries */
-typedef struct ac_nutility_data {
+typedef struct ac_nutility_data_struct {
 	List *rangeTable;
 	bool ereport_on_violation;
 } ac_nutility_data;
 
 /* Data needed for deciding on CREATE TRIGGER queries */
-typedef struct ac_create_trigger_data
-{
+typedef struct ac_create_trigger_data_struct {
 	bool isInternal;
 	Relation rel;
 	Oid constrrelid;
 	AclResult *aclresult;
 } ac_create_trigger_data;
 
-typedef struct ac_decision_data {
+typedef struct ac_decision_data_struct {
 	bool trigger; /* Trigger Flag, TRUE if inside trigger */
 	command_type command; /* Flag that indicates the command that was used */
 	ac_create_relation_data *create_relation_data; /* If (command == CREATE_RELATION) this cannot be NULL */

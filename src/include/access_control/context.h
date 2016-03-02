@@ -8,14 +8,14 @@
 #define INIT_STACK_SIZE 10
 
 /* Data structure representing context */
-typedef struct ac_context{
+typedef struct ac_context_struct{
 	Oid user;
 	Oid invoker;
 	Query *query;
 } ac_context;
 
 /* Context Stack Data Structure */
-typedef struct ac_context_stack{
+typedef struct ac_context_stack_struct{
 	ac_context **array;
 	ac_context *top;
 	int size;

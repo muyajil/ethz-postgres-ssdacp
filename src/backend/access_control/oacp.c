@@ -516,7 +516,7 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			decision_data->grant_data->objectId,
 			decision_data->grant_data->grantorId,
 			decision_data->grant_data->objkind,
-			decision_data->grant_data->objname
+			decision_data->grant_data->objname,
 			decision_data->grant_data->att_number,
 			decision_data->grant_data->colname);
 		return return_data;

@@ -1,6 +1,7 @@
 #ifndef SSDACP_H
 #define SSDACP_H
 
+#include <stdlib.h>
 #include "c.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"

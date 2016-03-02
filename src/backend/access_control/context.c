@@ -21,11 +21,12 @@ void ac_context_push(ac_context *context){
 
 /* Stack pop method */
 ac_context *ac_context_pop(){
+	ac_context *popped;
 	if(context_stack.size == context_stack.free_slots){
 		/* In this case the stack is empty and we return NULL */
 		return NULL;
 	}
-	ac_context *popped = context_stack.top;
+	popped = context_stack.top;
 	context_stack.free_slots++;
 	context_stack.array[context_stack.size - context_stack.free_slots] = NULL;
 	context_stack.top = context_stack.array[context_stack.size - context_stack.free_slots -1];

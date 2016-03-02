@@ -105,4 +105,14 @@ const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, N
  */
 extern ac_return_data authorized(ac_decision_data *decision_data);
 
+// This function is needed here, but defined in aclchk.c
+extern AclMode pg_aclmask (
+	AclObjectKind objkind, 
+	Oid table_oid, 
+	AttrNumber attnum, 
+	Oid roleid,
+	AclMode mask,
+	AclMaskHow how 
+	);
+
 #endif /* SSDACP_H */

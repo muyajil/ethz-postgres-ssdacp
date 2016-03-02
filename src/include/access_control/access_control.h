@@ -36,7 +36,7 @@ union ac_return_data_struct {
 	Oid target_namespace; /* Returned if CREATE is authorized */
 	AclMode current_privileges; /* Returned if GRANT is authorized */
 	bool execute; /* Returned if Non-utility command is authorized */
-	int nothing;
+	int nothing; /* If we would like to return NULL, kind of hacky, but just a quick fix atm */
 };
 
 typedef union ac_return_data_struct ac_return_data;
@@ -96,8 +96,6 @@ struct ac_decision_data_struct {
 typedef struct ac_decision_data_struct ac_decision_data;
 
 const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
-const ac_return_data AC_RETURN_DATA_NULL;
-AC_RETURN_DATA_NULL.nothing = 0;
 
 /*
  * Declaration of the interface authorized

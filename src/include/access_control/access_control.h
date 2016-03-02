@@ -8,6 +8,7 @@
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
 #include "utils/relcache.h"
+#include "utils/elog.h"
 #include "access/attnum.h"
 #include "access/sysattr.h"
 #include "storage/lockdefs.h"

@@ -1,23 +1,3 @@
-#include "postgres.h"
-
-#include "access/gist_private.h"
-#include "access/hash.h"
-#include "access/htup_details.h"
-#include "access/nbtree.h"
-#include "access/reloptions.h"
-#include "access/spgist.h"
-#include "catalog/pg_type.h"
-#include "commands/defrem.h"
-#include "commands/tablespace.h"
-#include "commands/view.h"
-#include "nodes/makefuncs.h"
-#include "utils/array.h"
-#include "utils/attoptcache.h"
-#include "utils/builtins.h"
-#include "utils/guc.h"
-#include "utils/memutils.h"
-#include "utils/rel.h"
-
 #include "access_control/access_control.h"
 
 /* Declaration of function that checks GRANT

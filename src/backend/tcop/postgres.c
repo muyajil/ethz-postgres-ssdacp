@@ -3571,6 +3571,7 @@ PostgresMain(int argc, char *argv[],
 	ac_context_stack context_stack;
 	const char *query_string_ssdacp;
 	List *raw_parsetree_list_ssdacp;
+	ListCell *parsetree_item;
 	Node *parsetree;
 	Query *parsed_query;
 	ac_context *context;

@@ -11,10 +11,11 @@
 #	 desired implementation
 #-------------------------------------------------------------------------
 
-#subdir = src/backend/access_control
-#top_builddir = ../../..
-#include $(top_builddir)/src/Makefile.global
+subdir = src/backend/access_control
+top_builddir = ../../..
+include $(top_builddir)/src/Makefile.global
 
-#OBJS = context.o oacp.o
+OBJS = test.o
+#context.o oacp.o
 
-#include $(top_srcdir)/src/backend/common.mk
+include $(top_srcdir)/src/backend/common.mk

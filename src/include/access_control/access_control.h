@@ -7,6 +7,7 @@
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
+#include "utils/relcache.h"
 #include "access/attnum.h"
 #include "access/sysattr.h"
 #include "storage/lockdefs.h"

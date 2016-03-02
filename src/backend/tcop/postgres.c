@@ -4043,7 +4043,7 @@ PostgresMain(int argc, char *argv[],
 			//Get the pointer to the node representing the parsetree
 			parsetree = (Node *) lfirst(parsetree_item);
 			//Now parse this and get the query back
-			parsed_query = parse_analyze(parsetree, query_string, NULL, 0);
+			parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
 			// Push to the stack
 			context.user = GetSessionUserId();
 			context.invoker = GetUserId();

@@ -92,6 +92,7 @@ struct ac_decision_data_struct {
 typedef struct ac_decision_data_struct ac_decision_data;
 
 const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
+const ac_return_data AC_RETURN_DATA_NULL = {0,0,FALSE};
 
 /*
  * Declaration of the interface authorized

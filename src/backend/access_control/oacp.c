@@ -526,7 +526,7 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			decision_data->create_trigger_data->rel,
 			decision_data->create_trigger_data->constrrelid,
 			decision_data->create_trigger_data->aclresult);
-		return NULL;
+		return AC_RETURN_DATA_NULL;
 	} else if(decision_data->nutility_data != NULL){
 		return_data.execute = ssdacp_ExecCheckRTPerms(
 			decision_data->nutility_data->rangeTable,

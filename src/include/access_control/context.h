@@ -12,7 +12,7 @@
 struct ac_context_struct{
 	Oid user;
 	Oid invoker;
-	Query *query;
+	Query query;
 };
 
 typedef struct ac_context_struct ac_context;

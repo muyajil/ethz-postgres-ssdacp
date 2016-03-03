@@ -675,7 +675,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	// Push to the stack
 	context.user = GetSessionUserId();
 	context.invoker = GetUserId();
-	context.query = query;
+	context.query = *query;
 
 	ac_context_push(&context, &context_stack);
 
@@ -3602,7 +3602,7 @@ PostgresMain(int argc, char *argv[],
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
 
 	/* Setup context stack */
-	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context));
+	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(*ac_context));
 	context_stack.array = &array;
 	context_stack.top = NULL;
 	context_stack.size = INIT_STACK_SIZE;

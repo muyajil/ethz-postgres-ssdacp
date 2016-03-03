@@ -126,4 +126,7 @@ extern char* get_database_name(Oid dbid);
 // The next variable is needed here, but defined in sinval.c
 extern uint64 SharedInvalidMessageCounter;
 
+// The next variable is needed here, but defined in globals.c
+extern Oid MyDatabaseId;
+
 #endif /* SSDACP_H */

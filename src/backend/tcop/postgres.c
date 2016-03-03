@@ -4032,6 +4032,9 @@ PostgresMain(int argc, char *argv[],
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
 
+		// Fool postgres into thinking we are in a transaction to satisfy transactions
+		start_xact_command();
+
 		// Get the string from the input message
 		query_string_ssdacp = pq_getmsgstring(&input_message);
 
@@ -4051,6 +4054,8 @@ PostgresMain(int argc, char *argv[],
 
 		ac_context_push(&context, &context_stack);
 		}
+		
+		finish_xact_command();
 
 		switch (firstchar)
 		{

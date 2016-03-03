@@ -120,4 +120,7 @@ extern AclMode pg_aclmask (
 extern int errcode(int sqlerrcode);
 extern int errmsg (const char *fmt, ...); 	
 
+// The next function is needed here, but defined in dbcommands.c
+extern char* get_database_name(Oid dbid);
+
 #endif /* SSDACP_H */

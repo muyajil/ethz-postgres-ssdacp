@@ -36,7 +36,7 @@ typedef struct ac_context_stack_struct ac_context_stack;
 /* load maps command */
 
 /* The global context stack */
-extern ac_context_stack context_stack;
+ac_context_stack context_stack;
 
 /* Stack push method */
 extern void ac_context_push(ac_context *context);

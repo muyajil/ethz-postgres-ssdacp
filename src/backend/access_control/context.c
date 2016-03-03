@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "access_control/context.h"
 
+ac_context_stack context_stack;
+
 /* Start declarations */
 
 void ac_context_push(ac_context *context);

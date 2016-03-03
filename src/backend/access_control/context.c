@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "access_control/context.h"
 
-ac_context_stack context_stack;
 
 /* Start declarations */
 
@@ -9,7 +8,7 @@ void ac_context_push(ac_context *context);
 ac_context *ac_context_pop();
 
 /* Stack push method */
-void ac_context_push(ac_context *context){
+void ac_context_push(ac_context *context, ac_context_stack *context_stack){
 	if (context_stack.free_slots == 0){
 		/* In this case the stack is full, we need to resize -> double for amortisation/performance */
 		context_stack.array = realloc(context_stack.array, 2*context_stack.size*sizeof(ac_context));
@@ -23,7 +22,7 @@ void ac_context_push(ac_context *context){
 }
 
 /* Stack pop method */
-ac_context *ac_context_pop(){
+ac_context *ac_context_pop(ac_context_stack *context_stack){
 	ac_context *popped;
 	if(context_stack.size == context_stack.free_slots){
 		/* In this case the stack is empty and we return NULL */

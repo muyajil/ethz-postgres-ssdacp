@@ -4308,7 +4308,7 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
-		ac_context_pop(context_stack); // we don't need the return value here
+		ac_context_pop(&context_stack); // we don't need the return value here
 	}							/* end of input-reading loop */
 }
 

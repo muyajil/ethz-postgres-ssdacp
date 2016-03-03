@@ -114,7 +114,7 @@ extern ac_return_data authorized(ac_decision_data *decision_data);
 
 // This function is needed here, but defined in aclchk.c
 extern AclMode pg_aclmask (
-	AclObjectKind objkind, int 
+	AclObjectKind objkind,
 	Oid table_oid, 
 	AttrNumber attnum, 
 	Oid roleid,

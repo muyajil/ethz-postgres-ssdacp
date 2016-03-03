@@ -288,23 +288,19 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 
 void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclResult *aclresult)
 {
-	if (!isInternal)
-	{
-		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
-									  ACL_TRIGGER);
-		if (aclresult != ACLCHECK_OK)
-			aclcheck_error(aclresult, ACL_KIND_CLASS,
-						   RelationGetRelationName(rel));
+	if (!isInternal){
+		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(), ACL_TRIGGER);
 
-		if (OidIsValid(constrrelid))
-		{
-			aclresult = pg_class_aclcheck(constrrelid, GetUserId(),
-										  ACL_TRIGGER);
+		if (aclresult != ACLCHECK_OK)
+			aclcheck_error(aclresult, ACL_KIND_CLASS, RelationGetRelationName(rel));
+
+		if (OidIsValid(constrrelid)){
+  			aclresult = pg_class_aclcheck(constrrelid, GetUserId(), ACL_TRIGGER);
+  			
 			if (aclresult != ACLCHECK_OK)
-				aclcheck_error(aclresult, ACL_KIND_CLASS,
-							   get_rel_name(constrrelid));
-		}
-	}
+  				aclcheck_error(aclresult, ACL_KIND_CLASS, get_rel_name(constrrelid));
+  		}
+  	}
 }
 
 bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)

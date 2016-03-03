@@ -220,10 +220,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 {
 	/* Declarations of variables */
 	ac_decision_data decision_data;
-	ac_grant_data grant_data;
-
-    /* Construct from default value */
-    decision_data = AC_DECISION_DATA_DEFAULT; 
+	ac_grant_data grant_data; 
 
 
     /* Here we decide if its a GRANT or REVOKE based on is_grant */
@@ -247,6 +244,11 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 
     /* assign pointer to the struct in decision_data */
     decision_data.grant_data = &grant_data;
+
+    /* define other fields NULL */
+    decision_data.create_relation_data = NULL;
+    decision_data.nutility_data = NULL;
+    decision_data.create_trigger_data = NULL;
 
     /* Call authorized and get return data */
     ac_return_data return_data = authorized(&decision_data);

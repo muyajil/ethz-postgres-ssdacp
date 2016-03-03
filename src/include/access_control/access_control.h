@@ -105,8 +105,6 @@ struct ac_decision_data_struct {
 
 typedef struct ac_decision_data_struct ac_decision_data;
 
-const ac_decision_data AC_DECISION_DATA_DEFAULT = {FALSE, DEFAULT, NULL, NULL, NULL, NULL};
-
 /*
  * Declaration of the interface authorized
  * Input arguments is all data needed to make the decision

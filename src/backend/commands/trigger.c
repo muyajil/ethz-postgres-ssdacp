@@ -166,7 +166,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	ObjectAddress myself,
 				referenced;
 	/* Construct decision_data from Default */
-	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT;
+	ac_decision_data decision_data;
 	ac_create_trigger_data create_trigger_data;
 
 	if (OidIsValid(relOid))
@@ -277,6 +277,11 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 
 	/* Assign pointer to data in decision_data */
 	decision_data.create_trigger_data = &create_trigger_data;
+
+	/* define other fields NULL */
+    decision_data.create_relation_data = NULL;
+    decision_data.nutility_data = NULL;
+    decision_data.grant_data = NULL;
 
 	/* Call authorized, here we do not care about the return value, should even be NULL here */
 	authorized(&decision_data);

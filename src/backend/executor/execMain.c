@@ -542,7 +542,7 @@ ExecutorRewind(QueryDesc *queryDesc)
 bool
 ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 {
-	ac_decision_data decision_data = AC_DECISION_DATA_DEFAULT; /* Construct from default values */
+	ac_decision_data decision_data; /* Construct from default values */
 
 	/* find out what type of query was run, leave DEFAULT if no match*/
 	if(command == CMD_SELECT){
@@ -558,6 +558,11 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 
 	/* Assign pointer to the data in decision_data */
 	decision_data.nutility_data = &nutility_data;
+
+	/* define other fields NULL */
+    decision_data.create_relation_data = NULL;
+    decision_data.grant_data = NULL;
+    decision_data.create_trigger_data = NULL;
 
 	/* Call authorized and get return data */
 	ac_return_data return_data = authorized(&decision_data);

@@ -529,9 +529,6 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 	ac_return_data return_data;
 	ac_decision_data decision_data;
 
-	/* Initialize decision_data with default values */
-	decision_data = AC_DECISION_DATA_DEFAULT;
-
 	/* Set the command field */
 	decision_data.command = CREATE_RELATION;
 
@@ -542,6 +539,11 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 
 	/* Assign pointer to the struct in decision_data */
 	decision_data.create_relation_data = &create_relation_data;
+
+	/* define other fields NULL */
+    decision_data.grant_data = NULL;
+    decision_data.nutility_data = NULL;
+    decision_data.create_trigger_data = NULL;
 
 	/* Call authorized and get return data */
 	return_data = authorized(&decision_data);

@@ -123,4 +123,7 @@ extern int errmsg (const char *fmt, ...);
 // The next function is needed here, but defined in dbcommands.c
 extern char* get_database_name(Oid dbid);
 
+// The next variable is needed here, but defined in sinval.c
+extern uint64 SharedInvalidMessageCounter;
+
 #endif /* SSDACP_H */

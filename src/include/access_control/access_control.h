@@ -7,6 +7,7 @@
 #include "postgres_ext.h"
 #include "miscadmin.h"
 #include "catalog/namespace.h"
+#include "catalog/pg_namespace.h"
 #include "commands/dbcommands.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"

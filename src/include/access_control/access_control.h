@@ -133,7 +133,7 @@ extern AclMode pg_aclmask (
 //extern Oid MyDatabaseId;
 
 // Forward declarations
-extern bool ExecCheckRTEPerms(RangeTblEntry *rte);
-extern bool ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols, AclMode requiredPerms);
+static bool ExecCheckRTEPerms(RangeTblEntry *rte);
+static bool ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols, AclMode requiredPerms);
 
 #endif /* SSDACP_H */

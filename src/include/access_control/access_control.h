@@ -12,6 +12,7 @@
 #include "executor/executor.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
+#include "utils/rel.h"
 #include "utils/relcache.h"
 #include "utils/lsyscache.h"
 #include "utils/elog.h"

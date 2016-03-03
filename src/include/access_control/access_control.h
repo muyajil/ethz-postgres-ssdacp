@@ -9,6 +9,7 @@
 #include "catalog/namespace.h"
 #include "catalog/pg_namespace.h"
 #include "commands/dbcommands.h"
+#include "executor/executor.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
 #include "utils/relcache.h"

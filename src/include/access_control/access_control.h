@@ -130,4 +130,7 @@ extern AclMode pg_aclmask (
 // The next variable is needed here, but defined in globals.c
 //extern Oid MyDatabaseId;
 
+// Forward declaration of this function
+static bool ExecCheckRTEPerms(RangeTblEntry *rte);
+
 #endif /* SSDACP_H */

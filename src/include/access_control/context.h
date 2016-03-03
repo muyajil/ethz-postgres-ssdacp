@@ -36,9 +36,9 @@ typedef struct ac_context_stack_struct ac_context_stack;
 /* load maps command */
 
 /* Stack push method */
-extern void ac_context_push(ac_context *context);
+extern void ac_context_push(ac_context *context, ac_context_stack *context_stack);
 
 /* Stack pop method */
-extern ac_context *ac_context_pop();
+extern ac_context *ac_context_pop(ac_context_stack *context_stack);
 
 #endif /* CONTEXT_H */

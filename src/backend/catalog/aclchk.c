@@ -117,7 +117,7 @@ static AclMode restrict_and_check_grant(bool is_grant, AclMode avail_goptions,
 						 Oid objectId, Oid grantorId,
 						 AclObjectKind objkind, const char *objname,
 						 AttrNumber att_number, const char *colname);
-static AclMode pg_aclmask(AclObjectKind objkind, Oid table_oid, AttrNumber attnum,
+AclMode pg_aclmask(AclObjectKind objkind, Oid table_oid, AttrNumber attnum,
 		   Oid roleid, AclMode mask, AclMaskHow how);
 
 
@@ -3315,7 +3315,7 @@ aclcheck_error_type(AclResult aclerr, Oid typeOid)
 /*
  * Relay for the various pg_*_mask routines depending on object kind
  */
-static AclMode
+AclMode
 pg_aclmask(AclObjectKind objkind, Oid table_oid, AttrNumber attnum, Oid roleid,
 		   AclMode mask, AclMaskHow how)
 {

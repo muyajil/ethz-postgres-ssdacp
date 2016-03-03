@@ -4,8 +4,8 @@
 
 /* Start declarations */
 
-void ac_context_push(ac_context *context);
-ac_context *ac_context_pop();
+void ac_context_push(ac_context *context, ac_context_stack *context_stack);
+ac_context *ac_context_pop(ac_context_stack *context_stack);
 
 /* Stack push method */
 void ac_context_push(ac_context *context, ac_context_stack *context_stack){

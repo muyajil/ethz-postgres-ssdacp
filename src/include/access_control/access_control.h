@@ -5,7 +5,7 @@
 #include "c.h"
 #include "postgres.h"
 #include "postgres_ext.h"
-#include "commands/namespace.h"
+#include "catalog/namespace.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
 #include "utils/relcache.h"

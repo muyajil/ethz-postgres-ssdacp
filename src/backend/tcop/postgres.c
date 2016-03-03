@@ -675,7 +675,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	// Push to the stack
 	context.user = GetSessionUserId();
 	context.invoker = GetUserId();
-	context.query = parsed_query;
+	context.query = query;
 
 	ac_context_push(&context, &context_stack);
 

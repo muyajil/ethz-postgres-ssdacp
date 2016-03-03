@@ -3602,7 +3602,7 @@ PostgresMain(int argc, char *argv[],
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
 
 	/* Setup context stack */
-	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(*ac_context));
+	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 	context_stack.array = &array;
 	context_stack.top = NULL;
 	context_stack.size = INIT_STACK_SIZE;

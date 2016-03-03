@@ -11,7 +11,7 @@ ac_context *ac_context_pop(ac_context_stack *context_stack);
 void ac_context_push(ac_context *context, ac_context_stack *context_stack){
 	if (context_stack->free_slots == 0){
 		/* In this case the stack is full, we need to resize -> double for amortisation/performance */
-		context_stack->array = realloc(context_stack->array, 2*context_stack->size*sizeof(*ac_context));
+		context_stack->array = realloc(context_stack->array, 2*context_stack->size*sizeof(ac_context*));
 		context_stack->free_slots = context_stack->size;
 		context_stack->size*=2;
 	}

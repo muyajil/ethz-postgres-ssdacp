@@ -7,6 +7,7 @@
 #include "postgres_ext.h"
 #include "miscadmin.h"
 #include "catalog/namespace.h"
+#include "commands/dbcommands.h"
 #include "nodes/parsenodes.h"
 #include "utils/acl.h"
 #include "utils/relcache.h"
@@ -15,6 +16,8 @@
 #include "access/attnum.h"
 #include "access/sysattr.h"
 #include "storage/lockdefs.h"
+#include "storage/lmgr.h"
+#include "storage/sinval.h"
 #include "nodes/primnodes.h"
 #include "nodes/pg_list.h"
 
@@ -111,7 +114,7 @@ extern ac_return_data authorized(ac_decision_data *decision_data);
 
 // This function is needed here, but defined in aclchk.c
 extern AclMode pg_aclmask (
-	AclObjectKind objkind, 
+	AclObjectKind objkind, int 
 	Oid table_oid, 
 	AttrNumber attnum, 
 	Oid roleid,
@@ -120,16 +123,10 @@ extern AclMode pg_aclmask (
 	);
 
 // The next two functions are needed here, but defined in elog.c
-extern int errcode(int sqlerrcode);
-extern int errmsg (const char *fmt, ...); 	
-
-// The next function is needed here, but defined in dbcommands.c
-extern char* get_database_name(Oid dbid);
-
-// The next variable is needed here, but defined in sinval.c
-extern uint64 SharedInvalidMessageCounter;
+//extern int errcode(int sqlerrcode);
+//extern int errmsg (const char *fmt, ...); 	
 
 // The next variable is needed here, but defined in globals.c
-extern Oid MyDatabaseId;
+//extern Oid MyDatabaseId;
 
 #endif /* SSDACP_H */

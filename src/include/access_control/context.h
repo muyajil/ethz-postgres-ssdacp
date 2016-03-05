@@ -31,6 +31,8 @@ typedef struct ac_context_stack_struct ac_context_stack;
 
 /* global 2d - map: view -> includes */
 
+/* global 1d - map: all created tables and views (even helper views) */
+
 /* save maps function */
 
 /* load maps function */

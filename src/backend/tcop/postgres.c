@@ -678,6 +678,16 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	context.query = *query;
 
 	ac_context_push(&context, &context_stack);
+	
+	//Here we test if the query is a utilityStmt, if yes this field cannot be NULL
+	if(query->utilityStmt){
+		//Here we test if we are creating a view or a table
+		if(query->utilityStmt->type == T_CreateStmt || query->utilityStmt->type == T_ViewStmt){
+			bool result = perform_mapping(*query);
+
+			// Here we need to do sth with the return vaule, if it is FALSE we need a error mechanism
+		}
+	}
 
 	if (log_parser_stats)
 		ShowUsage("PARSE ANALYSIS STATISTICS");

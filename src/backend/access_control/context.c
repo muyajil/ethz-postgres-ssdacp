@@ -39,14 +39,15 @@ ac_context *ac_context_pop(ac_context_stack *context_stack){
 bool perform_mapping(Query query){
 	ViewStmt *view_stmt;
 	SelectStmt *select_stmt;
+	List *power_set;
 	//First we need to test if we create a table
 	if(query->utilityStmt->type == T_CreateStmt){
 		// Add it to the map
 		// We need to go through all the views/tables and see which is included/includes this one
 		// Create a function that does that
 	} else if(query->utilityStmt->type == T_ViewStmt){
-		// Here we want to create the different queries according to the rules and then call DefineView()
-		// We need to have the query_string
+		// Here we want to split up the query in a way that we can reuse the maps directly
+		// So we 
 		// First we need to cast it to a ViewStmt
 		ViewStmt *view_stmt = (ViewStmt *) query->utilityStmt.query;
 		// Then we need to test if it is a select statement beneath, if not it is not supported
@@ -61,4 +62,43 @@ bool perform_mapping(Query query){
 
 	}
 
+}
+
+List* get_powerset(List target_list, int i){
+	int *bitmask;
+	int it, length;
+	ListCell *to_delete;
+	List *new_list;
+
+	// First the same
+	new_list = &target_list;
+
+	// Here we get the bitmask representing the ith powerset
+	bitmask = get_bitmask(i);
+	length = sizeof(bitmask)/sizeof(bitmask[0]);
+	for(it = 0; it < length; it++){
+		if(bitmask[it] == 0){
+			to_delete = list_nth_cell(new_list, it);
+			new_list = list_delete_cell(new_list, to_delete, to_delete->prev);
+		}
+	}
+
+	// Return
+	return new_list;
+}
+
+int* get_bitmask(int num){
+	int log_mask, k, mask;
+	int *bitmask;
+
+	log_mask = (int) log(num);
+	bitmask = calloc(sizeof(int) * log_mask);
+
+	while(log_mask--){
+		mask = 1 << log_mask;
+		mask = mask & num;
+		bitmask[log_mask] = mask >> log_mask;
+	}
+
+	return bitmask;
 }

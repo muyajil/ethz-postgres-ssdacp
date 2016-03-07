@@ -676,6 +676,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	context.user = GetSessionUserId();
 	context.invoker = GetUserId();
 	context.query = *query;
+	context.query_string = query_string;
 
 	ac_context_push(&context, &context_stack);
 	
@@ -3586,13 +3587,6 @@ PostgresMain(int argc, char *argv[],
 	sigjmp_buf	local_sigjmp_buf;
 	volatile bool send_ready_for_query = true;
 	ac_context *array;
-	//ac_context_stack context_stack;
-	//const char *query_string_ssdacp;
-	//List *raw_parsetree_list_ssdacp;
-	//ListCell *parsetree_item;
-	//Node *parsetree;
-	//Query *parsed_query;
-	//ac_context context;
 
 	/* Initialize startup process environment if necessary. */
 	if (!IsUnderPostmaster)

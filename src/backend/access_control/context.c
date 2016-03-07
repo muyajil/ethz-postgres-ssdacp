@@ -37,12 +37,28 @@ ac_context *ac_context_pop(ac_context_stack *context_stack){
 }
 
 bool perform_mapping(Query query){
+	ViewStmt *view_stmt;
+	SelectStmt *select_stmt;
 	//First we need to test if we create a table
 	if(query->utilityStmt->type == T_CreateStmt){
 		// Add it to the map
 		// We need to go through all the views/tables and see which is included/includes this one
+		// Create a function that does that
 	} else if(query->utilityStmt->type == T_ViewStmt){
-		//Perform splits of the underlying select statement and compute maps
+		// Here we want to create the different queries according to the rules and then call DefineView()
+		// We need to have the query_string
+		// First we need to cast it to a ViewStmt
+		ViewStmt *view_stmt = (ViewStmt *) query->utilityStmt.query;
+		// Then we need to test if it is a select statement beneath, if not it is not supported
+		if(view_stmt->query->type == T_SelectStmt){
+			// Again we need to cast it to a SelectStmt
+			select_stmt = (SelectStmt *) view_stmt->query;
+			// Now we have access to the different parts of the query
+
+		} else {
+			// Maybe we need to print an error here, but for now just do nothing
+		}
+
 	}
 
 }

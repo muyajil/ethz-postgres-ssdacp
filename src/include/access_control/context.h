@@ -5,6 +5,7 @@
 #include "postgres.h"
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
+#include "nodes/primnodes.h"
 
 #define INIT_STACK_SIZE 10
 
@@ -13,6 +14,7 @@ struct ac_context_struct{
 	Oid user;
 	Oid invoker;
 	Query query;
+	const char *query_string;
 };
 
 typedef struct ac_context_struct ac_context;

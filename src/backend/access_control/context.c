@@ -120,7 +120,7 @@ bool perform_mapping(Query query){
 
 List* get_powerset(List target_list, int i){
 	// TODO: correct bitmask implementation!!!
-	int *bitmask;
+	bool *bitmask;
 	int it, length;
 	ListCell *to_delete;
 	ListCell *prev;
@@ -128,15 +128,15 @@ List* get_powerset(List target_list, int i){
 
 	// First the same
 	new_list = &target_list;
+	length = new_list->length;
 
 	// Here we get the bitmask representing the ith powerset
-	bitmask = get_bitmask(i);
-	length = sizeof(bitmask)/sizeof(bitmask[0]);
+	bitmask = get_bitmask(i, length);
 	for(it = length; it > 0; it++){ 
-		if(bitmask[it] == 0){
+		if(!bitmask[it]){
 			to_delete = list_nth_cell(new_list, it);
 			prev = list_nth_cell(new_list, it-1);
-			new_list = list_delete_cell(new_list, to_delete, to_delete->prev);
+			new_list = list_delete_cell(new_list, to_delete, prev);
 		}
 	}
 
@@ -144,17 +144,17 @@ List* get_powerset(List target_list, int i){
 	return new_list;
 }
 
-int* get_bitmask(int num){
+bool* get_bitmask(int num, int length){
 	int log_mask, k, mask;
-	int *bitmask;
+	bool *bitmask;
 
 	log_mask = (int) log(num);
-	bitmask = calloc(sizeof(int) * log_mask);
+	bitmask = calloc(length, sizeof(bool));
 
 	while(log_mask--){
 		mask = 1 << log_mask;
 		mask = mask & num;
-		bitmask[log_mask] = mask >> log_mask;
+		bitmask[log_mask] = (bool) mask >> log_mask;
 	}
 
 	return bitmask;

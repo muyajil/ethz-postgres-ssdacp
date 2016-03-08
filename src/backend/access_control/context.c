@@ -7,6 +7,8 @@
 void ac_context_push(ac_context *context, ac_context_stack *context_stack);
 ac_context *ac_context_pop(ac_context_stack *context_stack);
 bool perform_mapping(Query query);
+List* get_powerset(List target_list, int i);
+int* get_bitmask(int num);
 
 /* Stack push method */
 void ac_context_push(ac_context *context, ac_context_stack *context_stack){
@@ -117,6 +119,7 @@ bool perform_mapping(Query query){
 }
 
 List* get_powerset(List target_list, int i){
+	// TODO: correct bitmask implementation!!!
 	int *bitmask;
 	int it, length;
 	ListCell *to_delete;
@@ -129,7 +132,7 @@ List* get_powerset(List target_list, int i){
 	// Here we get the bitmask representing the ith powerset
 	bitmask = get_bitmask(i);
 	length = sizeof(bitmask)/sizeof(bitmask[0]);
-	for(it = 0; it < length; it++){ 
+	for(it = length; it > 0; it++){ 
 		if(bitmask[it] == 0){
 			to_delete = list_nth_cell(new_list, it);
 			prev = list_nth_cell(new_list, it-1);

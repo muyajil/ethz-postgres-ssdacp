@@ -54,7 +54,7 @@ bool perform_mapping(Query query){
 		// Here we want to split up the query in a way that we can reuse the maps directly
 		// So we 
 		// First we need to cast it to a ViewStmt
-		ViewStmt *view_stmt = (ViewStmt *) query.utilityStmt->query;
+		ViewStmt *view_stmt = (ViewStmt *) query.utilityStmt;
 		// Then we need to test if it is a select statement beneath, if not it is not supported
 		if(view_stmt->query->type == T_SelectStmt){
 			// Again we need to cast it to a SelectStmt

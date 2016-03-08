@@ -8,7 +8,7 @@ void ac_context_push(ac_context *context, ac_context_stack *context_stack);
 ac_context *ac_context_pop(ac_context_stack *context_stack);
 bool perform_mapping(Query query);
 List* get_powerset(List target_list, int i);
-int* get_bitmask(int num, int length;
+bool* get_bitmask(int num, int length;
 
 /* Stack push method */
 void ac_context_push(ac_context *context, ac_context_stack *context_stack){

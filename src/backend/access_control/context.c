@@ -145,7 +145,7 @@ List* get_powerset(List target_list, int i){
 }
 
 bool* get_bitmask(int num, int length){
-	int log_mask, k, mask;
+	int log_mask, mask;
 	bool *bitmask;
 
 	log_mask = (int) log(num);

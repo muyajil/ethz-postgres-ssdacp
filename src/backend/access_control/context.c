@@ -67,7 +67,7 @@ bool perform_mapping(Query query){
 			 */
 			target_list = select_stmt->targetList;
 
-			int num_sets = pow(2, target_list->length) - 1;
+			num_sets = pow(2, target_list->length) - 1;
 
 			while(num_sets--){
 				// here we go through all the powersets (in reverse order i.e. start with all elements end with 0

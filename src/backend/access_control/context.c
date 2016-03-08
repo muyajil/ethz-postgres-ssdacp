@@ -39,7 +39,12 @@ ac_context *ac_context_pop(ac_context_stack *context_stack){
 bool perform_mapping(Query query){
 	ViewStmt *view_stmt;
 	SelectStmt *select_stmt;
-	List *power_set;
+	List *next_list;
+	List *target_list;
+	Node *where_clause_node;
+	BoolExpr *where_clause;
+
+	int num_sets;
 	//First we need to test if we create a table
 	if(query->utilityStmt->type == T_CreateStmt){
 		// Add it to the map
@@ -56,6 +61,43 @@ bool perform_mapping(Query query){
 			select_stmt = (SelectStmt *) view_stmt->query;
 			// Now we have access to the different parts of the query
 
+
+			/* In the following section we will address all possible projections of the target list
+			 * i.e. the coloumns of the view that is to be created
+			 */
+			target_list = select_stmt->targetList;
+
+			int num_sets = pow(2, target_list->length) - 1;
+
+			while(num_sets--){
+				// here we go through all the powersets (in reverse order i.e. start with all elements end with 0
+				// which we actually do not want, therefore -1 above)
+				next_list = get_powerset(*target_list, num_sets);
+
+				// This represents one of all possible projections of this target list
+				// We could use this for defining a new view or sth else
+			}
+
+			/* In the following section we will handle the different rules for the where clause
+			 * ATM we only split the outermost boolean function up
+			 */
+
+			 where_clause_node = select_stmt->whereClause;
+			 if(where_clause_node->type == T_BoolExpr){
+			 	// then we know we have some boolean expression
+			 	where_clause = (BoolExpr *) where_clause_node;
+
+			 	if(where_clause->boolop == AND_EXPR){
+			 		// AND
+			 	} else if(where_clause->boolop == OR_EXPR){
+			 		// OR
+			 	} else if(where_clause->boolop == NOT_EXPR){
+			 		// NOT
+			 	} else {
+			 		// invalid
+			 	}
+			 }
+
 		} else {
 			// Maybe we need to print an error here, but for now just do nothing
 		}
@@ -68,6 +110,7 @@ List* get_powerset(List target_list, int i){
 	int *bitmask;
 	int it, length;
 	ListCell *to_delete;
+	ListCell *prev;
 	List *new_list;
 
 	// First the same
@@ -79,6 +122,7 @@ List* get_powerset(List target_list, int i){
 	for(it = 0; it < length; it++){
 		if(bitmask[it] == 0){
 			to_delete = list_nth_cell(new_list, it);
+			prev = list_nth_cell(new_list, it-1);
 			new_list = list_delete_cell(new_list, to_delete, to_delete->prev);
 		}
 	}

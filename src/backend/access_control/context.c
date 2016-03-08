@@ -46,15 +46,15 @@ bool perform_mapping(Query query){
 
 	int num_sets;
 	//First we need to test if we create a table
-	if(query->utilityStmt->type == T_CreateStmt){
+	if(query.utilityStmt->type == T_CreateStmt){
 		// Add it to the map
 		// We need to go through all the views/tables and see which is included/includes this one
 		// Create a function that does that
-	} else if(query->utilityStmt->type == T_ViewStmt){
+	} else if(query.utilityStmt->type == T_ViewStmt){
 		// Here we want to split up the query in a way that we can reuse the maps directly
 		// So we 
 		// First we need to cast it to a ViewStmt
-		ViewStmt *view_stmt = (ViewStmt *) query->utilityStmt.query;
+		ViewStmt *view_stmt = (ViewStmt *) query.utilityStmt->query;
 		// Then we need to test if it is a select statement beneath, if not it is not supported
 		if(view_stmt->query->type == T_SelectStmt){
 			// Again we need to cast it to a SelectStmt

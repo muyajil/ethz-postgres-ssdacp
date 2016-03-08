@@ -80,26 +80,36 @@ bool perform_mapping(Query query){
 
 			/* In the following section we will handle the different rules for the where clause
 			 * ATM we only split the outermost boolean function up
+			 * !!! It could also be a arithmetic expression inside a booloean!
 			 */
 
 			 where_clause_node = select_stmt->whereClause;
 			 if(where_clause_node->type == T_BoolExpr){
 			 	// then we know we have some boolean expression
+			 	// We have where_clause -> args which is a List * holding arguments
+			 	// BoolExpr *arg1 = (BoolExpr *) where_clause -> args -> head -> data
+			 	// BoolExpr *arg2 = (BoolExpr *) where_clause -> args -> tail -> data
 			 	where_clause = (BoolExpr *) where_clause_node;
 
 			 	if(where_clause->boolop == AND_EXPR){
 			 		// AND
+			 		// Here we can create two views that include the new view
+			 		// where_clause ->
 			 	} else if(where_clause->boolop == OR_EXPR){
 			 		// OR
+			 		// Here we can create two views that are included by the new view
 			 	} else if(where_clause->boolop == NOT_EXPR){
 			 		// NOT
+			 		// Here we can use the NOT trick
 			 	} else {
 			 		// invalid
+			 		return FALSE;
 			 	}
 			 }
 
 		} else {
-			// Maybe we need to print an error here, but for now just do nothing
+			// Maybe we need to print an error here, but for now just do nothing since error will
+			// be raised at another location
 		}
 
 	}
@@ -119,7 +129,7 @@ List* get_powerset(List target_list, int i){
 	// Here we get the bitmask representing the ith powerset
 	bitmask = get_bitmask(i);
 	length = sizeof(bitmask)/sizeof(bitmask[0]);
-	for(it = 0; it < length; it++){
+	for(it = 0; it < length; it++){ 
 		if(bitmask[it] == 0){
 			to_delete = list_nth_cell(new_list, it);
 			prev = list_nth_cell(new_list, it-1);

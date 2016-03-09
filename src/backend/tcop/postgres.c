@@ -3599,10 +3599,6 @@ PostgresMain(int argc, char *argv[],
 
 	/* Setup context stack */
 	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
-	//context_stack.array = &array;
-	//context_stack.top = NULL;
-	//context_stack.size = INIT_STACK_SIZE;
-	//context_stack.free_slots = INIT_STACK_SIZE;
 
 	context_stack->array = &array;
 	context_stack->top = NULL;
@@ -4040,29 +4036,6 @@ PostgresMain(int argc, char *argv[],
 		 */
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
-
-		/*
-		// Fool postgres into thinking we are in a transaction to satisfy transactions
-		start_xact_command();
-
-		// Get the string from the input message
-		query_string_ssdacp = pq_getmsgstring(&input_message);
-
-		// Here we get a list back, in case there are multiple commands in the string
-		raw_parsetree_list_ssdacp = raw_parser(query_string_ssdacp);
-
-		// We loop through all the commands (mostly just once)
-		foreach(parsetree_item, raw_parsetree_list_ssdacp){
-			//Get the pointer to the node representing the parsetree
-			parsetree = (Node *) lfirst(parsetree_item);
-			//Now parse this and get the query back
-			parsed_query = parse_analyze(parsetree, query_string_ssdacp, NULL, 0);
-			
-		}
-
-		finish_xact_command();
-
-		*/
 
 		switch (firstchar)
 		{

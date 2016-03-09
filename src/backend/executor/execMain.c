@@ -543,6 +543,8 @@ bool
 ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 {
 	ac_decision_data decision_data; /* Construct from default values */
+	ac_nutility_data nutility_data;
+	ac_return_data return_data;
 
 	/* find out what type of query was run, leave DEFAULT if no match*/
 	if(command == CMD_SELECT){
@@ -554,7 +556,7 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 	}
 
 	/* Initialize nutility_data with arguments */
-	ac_nutility_data nutility_data = {rangeTable, ereport_on_violation};
+	nutility_data = {rangeTable, ereport_on_violation};
 
 	/* Assign pointer to the data in decision_data */
 	decision_data.nutility_data = &nutility_data;
@@ -565,7 +567,7 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
     decision_data.create_trigger_data = NULL;
 
 	/* Call authorized and get return data */
-	ac_return_data return_data = authorized(&decision_data);
+	return_data = authorized(&decision_data);
 
 	/* Return what we got from authorize */
 	return return_data.execute;

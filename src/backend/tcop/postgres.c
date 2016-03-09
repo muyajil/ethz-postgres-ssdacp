@@ -4325,7 +4325,7 @@ PostgresMain(int argc, char *argv[],
 		if(!mapping_result){
 			//mapping was unsuccessful
 		}
-		ac_context_pop(&context_stack); // we don't need the return value here
+		ac_context_pop(); // we don't need the return value here
 	}							/* end of input-reading loop */
 }
 

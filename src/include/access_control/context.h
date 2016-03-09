@@ -42,7 +42,7 @@ typedef struct ac_context_stack_struct ac_context_stack;
 /* load maps function */
 
 /* perform mapping function */
-bool perform_mapping();
+extern bool perform_mapping();
 
 /* Stack push method */
 //extern void ac_context_push(ac_context *context, ac_context_stack *context_stack);
@@ -52,6 +52,6 @@ extern void ac_context_push(ac_context *context);
 extern ac_context_stack *context_stack;
 
 /* Stack pop method */
-extern ac_context *ac_context_pop(ac_context_stack *context_stack);
+extern ac_context *ac_context_pop();
 
 #endif /* CONTEXT_H */

@@ -5,8 +5,8 @@
 /* Start declarations */
 
 void ac_context_push(ac_context *context);
-ac_context *ac_context_pop(ac_context_stack *context_stack);
-bool perform_mapping();
+ac_context *ac_context_pop();
+bool perform_mapping(void);
 List* get_powerset(List target_list, int i);
 bool* get_bitmask(int num, int length);
 
@@ -25,7 +25,7 @@ void ac_context_push(ac_context *context){
 }
 
 /* Stack pop method */
-ac_context *ac_context_pop(ac_context_stack *context_stack){
+ac_context *ac_context_pop(){
 	ac_context *popped;
 	if(context_stack->size == context_stack->free_slots){
 		/* In this case the stack is empty and we return NULL */
@@ -38,7 +38,7 @@ ac_context *ac_context_pop(ac_context_stack *context_stack){
 	return popped;
 }
 
-bool perform_mapping(){
+bool perform_mapping(void){
 	ViewStmt *view_stmt;
 	CreateStmt *create_stmt;
 	SelectStmt *select_stmt;
@@ -53,7 +53,7 @@ bool perform_mapping(){
 	List *parsetree_list;
 
 	// Get the query from the stack (we get a copy, so we can modify it as we wish)
-	query = *(context_stack->top->query);
+	query = context_stack->top->query;
 	//First we need to test if we create a table
 	if(query.utilityStmt->type == T_CreateStmt){
 		/* Add it to the map

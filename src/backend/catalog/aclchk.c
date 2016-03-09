@@ -221,6 +221,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
 	/* Declarations of variables */
 	ac_decision_data decision_data;
 	ac_grant_data grant_data; 
+	ac_return_data return_data;
 
 
     /* Here we decide if its a GRANT or REVOKE based on is_grant */
@@ -251,7 +252,7 @@ restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
     decision_data.create_trigger_data = NULL;
 
     /* Call authorized and get return data */
-    ac_return_data return_data = authorized(&decision_data);
+    return_data = authorized(&decision_data);
 
     /* Return what we got from authorized */
     return return_data.current_privileges;

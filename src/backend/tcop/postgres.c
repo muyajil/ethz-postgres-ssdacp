@@ -678,6 +678,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	context.query = *query;
 	context.query_string = query_string;
 
+	#ifdef FRONTEND
 	ac_context_push(&context, &context_stack);
 	
 	//Here we test if the query is a utilityStmt, if yes this field cannot be NULL
@@ -689,6 +690,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 			// Here we need to do sth with the return vaule, if it is FALSE we need a error mechanism
 		}
 	}
+	#endif
 
 	if (log_parser_stats)
 		ShowUsage("PARSE ANALYSIS STATISTICS");

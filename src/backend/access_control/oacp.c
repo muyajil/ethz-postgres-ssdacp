@@ -333,7 +333,7 @@ bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
  * ExecCheckRTEPerms
  *		Check access permissions for a single RTE.
  */
-static bool
+bool
 ExecCheckRTEPerms(RangeTblEntry *rte)
 {
 	AclMode		requiredPerms;
@@ -453,7 +453,7 @@ ExecCheckRTEPerms(RangeTblEntry *rte)
  *		Check INSERT or UPDATE access permissions for a single RTE (these
  *		are processed uniformly).
  */
-static bool
+bool
 ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
 						  AclMode requiredPerms)
 {

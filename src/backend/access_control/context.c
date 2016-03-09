@@ -5,7 +5,7 @@
 /* Start declarations */
 
 void ac_context_push(ac_context *context);
-ac_context *ac_context_pop();
+ac_context *ac_context_pop(void);
 bool perform_mapping(void);
 List* get_powerset(List target_list, int i);
 bool* get_bitmask(int num, int length);
@@ -25,7 +25,7 @@ void ac_context_push(ac_context *context){
 }
 
 /* Stack pop method */
-ac_context *ac_context_pop(){
+ac_context *ac_context_pop(void){
 	ac_context *popped;
 	if(context_stack.size == context_stack.free_slots){
 		/* In this case the stack is empty and we return NULL */

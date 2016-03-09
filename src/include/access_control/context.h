@@ -44,10 +44,11 @@ typedef struct ac_context_stack_struct ac_context_stack;
 bool perform_mapping(Query query);
 
 /* Stack push method */
-extern void ac_context_push(ac_context *context, ac_context_stack *context_stack);
+//extern void ac_context_push(ac_context *context, ac_context_stack *context_stack);
+extern void ac_context_push(ac_context *context);
 
 /* global context stack */
-extern ac_context_stack context_stack;
+extern ac_context_stack *context_stack;
 
 /* Stack pop method */
 extern ac_context *ac_context_pop(ac_context_stack *context_stack);

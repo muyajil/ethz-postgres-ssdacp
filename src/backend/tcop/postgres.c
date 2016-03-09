@@ -100,7 +100,7 @@ int			max_stack_depth = 100;
 int			PostAuthDelay = 0;
 
 /* global context stack */
-ac_context_stack context_stack;
+ac_context_stack *context_stack;
 
 /* ----------------
  *		private variables
@@ -678,7 +678,8 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	context.query = *query;
 	context.query_string = query_string;
 
-	ac_context_push(&context, &context_stack);
+	//ac_context_push(&context, &context_stack);
+	ac_context_push(&context);
 
 	if (log_parser_stats)
 		ShowUsage("PARSE ANALYSIS STATISTICS");
@@ -3598,10 +3599,15 @@ PostgresMain(int argc, char *argv[],
 
 	/* Setup context stack */
 	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
-	context_stack.array = &array;
-	context_stack.top = NULL;
-	context_stack.size = INIT_STACK_SIZE;
-	context_stack.free_slots = INIT_STACK_SIZE;
+	//context_stack.array = &array;
+	//context_stack.top = NULL;
+	//context_stack.size = INIT_STACK_SIZE;
+	//context_stack.free_slots = INIT_STACK_SIZE;
+
+	context_stack->array = &array;
+	context_stack->top = NULL;
+	context_stack->size = INIT_STACK_SIZE;
+	context_stack->free_slots = INIT_STACK_SIZE;
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)

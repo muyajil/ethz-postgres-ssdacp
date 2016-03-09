@@ -42,7 +42,7 @@ typedef struct ac_context_stack_struct ac_context_stack;
 /* load maps function */
 
 /* perform mapping function */
-bool perform_mapping(Query query);
+bool perform_mapping();
 
 /* Stack push method */
 //extern void ac_context_push(ac_context *context, ac_context_stack *context_stack);

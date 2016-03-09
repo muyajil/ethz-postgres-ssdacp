@@ -4179,9 +4179,9 @@ BackendRun(Port *port)
 	int			usecs;
 	int			i;
 
-	#ifndef FRONTEND_CONNECTED
+	//#ifndef FRONTEND_CONNECTED
 	#define FRONTEND_CONNECTED 1
-	#endif
+	//#endif
 	/*
 	 * Don't want backend to be able to see the postmaster random number
 	 * generator state.  We have to clobber the static random_seed *and* start

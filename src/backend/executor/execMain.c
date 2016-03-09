@@ -556,7 +556,8 @@ ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation, CmdType command)
 	}
 
 	/* Initialize nutility_data with arguments */
-	nutility_data = {rangeTable, ereport_on_violation};
+	nutility_data.rangeTable = rangeTable;
+	nutility_data.ereport_on_violation = ereport_on_violation;
 
 	/* Assign pointer to the data in decision_data */
 	decision_data.nutility_data = &nutility_data;

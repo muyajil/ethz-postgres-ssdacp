@@ -70,7 +70,7 @@ bool perform_mapping(Query query){
 			target_list = select_stmt->targetList;
 
 			num_sets = pow(2, target_list->length) - 1;
-
+			/*
 			while(num_sets--){
 				// here we go through all the powersets (in reverse order i.e. start with all elements end with 0
 				// which we actually do not want, therefore -1 above)
@@ -79,7 +79,7 @@ bool perform_mapping(Query query){
 				// This represents one of all possible projections of this target list
 				// We could use this for defining a new view or sth else
 			}
-
+			*/
 			/* In the following section we will handle the different rules for the where clause
 			 * ATM we only split the outermost boolean function up
 			 * !!! It could also be a arithmetic expression inside a booloean!

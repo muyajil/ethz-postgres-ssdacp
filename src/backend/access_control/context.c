@@ -4,7 +4,7 @@
 
 /* Start declarations */
 
-void ac_context_push(ac_context *context, ac_context_stack *context_stack);
+void ac_context_push(ac_context *context);
 ac_context *ac_context_pop(ac_context_stack *context_stack);
 bool perform_mapping();
 List* get_powerset(List target_list, int i);

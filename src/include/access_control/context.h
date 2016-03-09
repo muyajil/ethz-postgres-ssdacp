@@ -6,6 +6,7 @@
 #include "postgres_ext.h"
 #include "nodes/parsenodes.h"
 #include "nodes/primnodes.h"
+#include "tcop/tcopprot.h"
 #include <math.h>
 
 #define INIT_STACK_SIZE 10

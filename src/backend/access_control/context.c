@@ -38,24 +38,50 @@ ac_context *ac_context_pop(ac_context_stack *context_stack){
 	return popped;
 }
 
-bool perform_mapping(Query query){
+bool perform_mapping(){
 	ViewStmt *view_stmt;
+	CreateStmt *create_stmt;
 	SelectStmt *select_stmt;
 	List *next_list;
 	List *target_list;
 	Node *where_clause_node;
+	char *relation_name;
+	char *select_query_string;
 	BoolExpr *where_clause;
-
+	Query query;
 	int num_sets;
+	List *parsetree_list;
+
+	// Get the query from the stack (we get a copy, so we can modify it as we wish)
+	query = *(context_stack->top->query);
 	//First we need to test if we create a table
 	if(query.utilityStmt->type == T_CreateStmt){
-		// Add it to the map
-		// We need to go through all the views/tables and see which is included/includes this one
-		// Create a function that does that
+		/* Add it to the map
+		 * We need to go through all the views/tables and see which is included/includes this one
+		 * Create a SELECT statement that selects everything from this table
+		 * This would be better after the CreateStatement was executed
+		 * Probably we should call perform_mapping just before popping from the contex stack
+		 */
+
+		 // First we want to get the name of the relation that was created
+		 create_stmt = (CreateStmt *) query.utilityStmt;
+		 relation_name = create_stmt->relation->relname;
+
+		 // Next we will construct a string representing a SELECT that collects all data from the new table
+		 select_query_string = malloc(strlen(relation_name)+14);
+		 strcpy(select_query_string, "SELECT * FROM");
+		 strcat(select_query_string, relation_name);
+		 strcat(select_query_string, ";");
+		 free(relation_name);
+
+		 //Now we will parse this
+		 parsetree_list = pg_parse_query(select_query_string);
+
 	} else if(query.utilityStmt->type == T_ViewStmt){
-		// Here we want to split up the query in a way that we can reuse the maps directly
-		// So we 
-		// First we need to cast it to a ViewStmt
+		/* Here we want to split up the query in a way that we can reuse the maps directly
+		 * So we 
+		 * First we need to cast it to a ViewStmt
+		 */
 		view_stmt = (ViewStmt *) query.utilityStmt;
 		// Then we need to test if it is a select statement beneath, if not it is not supported
 		if(view_stmt->query->type == T_SelectStmt){
@@ -82,36 +108,41 @@ bool perform_mapping(Query query){
 
 			/* In the following section we will handle the different rules for the where clause
 			 * ATM we only split the outermost boolean function up
-			 * !!! It could also be a arithmetic expression inside a booloean!
+			 * 
+			 * What about arithmetic expressions? We need to check for that!
 			 */
 
 			 where_clause_node = select_stmt->whereClause;
 			 if(where_clause_node->type == T_BoolExpr){
-			 	// then we know we have some boolean expression
-			 	// We have where_clause -> args which is a List * holding arguments
-			 	// BoolExpr *arg1 = (BoolExpr *) where_clause -> args -> head -> data
-			 	// BoolExpr *arg2 = (BoolExpr *) where_clause -> args -> tail -> data
+			 	/* then we know we have some boolean expression
+			 	 * We have where_clause -> args which is a List * holding arguments
+			 	 * BoolExpr *arg1 = (BoolExpr *) where_clause -> args -> head -> data
+			 	 * BoolExpr *arg2 = (BoolExpr *) where_clause -> args -> tail -> data
+			 	 */
 			 	where_clause = (BoolExpr *) where_clause_node;
 
 			 	if(where_clause->boolop == AND_EXPR){
-			 		// AND
+			 		// case AND
 			 		// Here we can create two views that include the new view
-			 		// where_clause ->
 			 	} else if(where_clause->boolop == OR_EXPR){
-			 		// OR
+			 		// case OR
 			 		// Here we can create two views that are included by the new view
 			 	} else if(where_clause->boolop == NOT_EXPR){
-			 		// NOT
+			 		// case NOT
 			 		// Here we can use the NOT trick
 			 	} else {
 			 		// invalid
 			 		return FALSE;
 			 	}
+			 } else {
+			 	// then we do not have a boolean expression here
+			 	// probably arithmetic
 			 }
 
 		} else {
-			// Maybe we need to print an error here, but for now just do nothing since error will
-			// be raised at another location
+			// Neither T_CreateStmt nor T_ViewStmt
+			// Maybe returning false is not so good since it is unsupported not wrong
+			return FALSE;
 		}
 
 	}
@@ -119,7 +150,6 @@ bool perform_mapping(Query query){
 }
 
 List* get_powerset(List target_list, int i){
-	// TODO: correct bitmask implementation!!!
 	bool *bitmask;
 	int it, length;
 	ListCell *to_delete;

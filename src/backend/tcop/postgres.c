@@ -672,13 +672,14 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		ResetUsage();
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
+
+	#ifdef FRONTEND
 	// Push to the stack
 	context.user = GetSessionUserId();
 	context.invoker = GetUserId();
 	context.query = *query;
 	context.query_string = query_string;
 
-	#ifdef FRONTEND
 	ac_context_push(&context);
 	
 	//Here we test if the query is a utilityStmt, if yes this field cannot be NULL
@@ -3607,7 +3608,7 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
-
+	#ifdef FRONTEND
 	/* Setup context stack */
 	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 
@@ -3615,6 +3616,7 @@ PostgresMain(int argc, char *argv[],
 	context_stack.top = NULL;
 	context_stack.size = INIT_STACK_SIZE;
 	context_stack.free_slots = INIT_STACK_SIZE;
+	#endif
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)
@@ -4304,12 +4306,15 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
+		#ifdef FRONTEND
 		// Before popping we perform the mapping
 		mapping_result = perform_mapping();
 		if(!mapping_result){
 			//mapping was unsuccessful
 		}
+		
 		ac_context_pop(); // we don't need the return value here
+		#endif
 	}							/* end of input-reading loop */
 }
 

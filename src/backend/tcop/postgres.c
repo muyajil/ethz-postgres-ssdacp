@@ -673,25 +673,25 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
 
-	#ifdef FRONTEND_CONNECTED
-	// Push to the stack
-	context.user = GetSessionUserId();
-	context.invoker = GetUserId();
-	context.query = *query;
-	context.query_string = query_string;
+	if(frontend_connected){
+		// Push to the stack
+		context.user = GetSessionUserId();
+		context.invoker = GetUserId();
+		context.query = *query;
+		context.query_string = query_string;
 
-	ac_context_push(&context);
-	
-	//Here we test if the query is a utilityStmt, if yes this field cannot be NULL
-	if(query->utilityStmt){
-		//Here we test if we are creating a view or a table
-		if(query->utilityStmt->type == T_CreateStmt || query->utilityStmt->type == T_ViewStmt){
-			bool result = perform_mapping(*query);
+		ac_context_push(&context);
+		
+		//Here we test if the query is a utilityStmt, if yes this field cannot be NULL
+		if(query->utilityStmt){
+			//Here we test if we are creating a view or a table
+			if(query->utilityStmt->type == T_CreateStmt || query->utilityStmt->type == T_ViewStmt){
+				bool result = perform_mapping(*query);
 
-			// Here we need to do sth with the return vaule, if it is FALSE we need a error mechanism
+				// Here we need to do sth with the return vaule, if it is FALSE we need a error mechanism
+			}
 		}
 	}
-	#endif
 
 	if (log_parser_stats)
 		ShowUsage("PARSE ANALYSIS STATISTICS");
@@ -3608,15 +3608,15 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
-	#ifdef FRONTEND_CONNECTED
-	/* Setup context stack */
-	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
+	if(frontend_connected){
+		/* Setup context stack */
+		array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 
-	context_stack.array = &array;
-	context_stack.top = NULL;
-	context_stack.size = INIT_STACK_SIZE;
-	context_stack.free_slots = INIT_STACK_SIZE;
-	#endif
+		context_stack.array = &array;
+		context_stack.top = NULL;
+		context_stack.size = INIT_STACK_SIZE;
+		context_stack.free_slots = INIT_STACK_SIZE;
+	}
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)
@@ -4306,15 +4306,15 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
-		#ifdef FRONTEND_CONNECTED
-		// Before popping we perform the mapping
-		mapping_result = perform_mapping();
-		if(!mapping_result){
-			//mapping was unsuccessful
+		if(frontend_connected){
+			// Before popping we perform the mapping
+			mapping_result = perform_mapping();
+			if(!mapping_result){
+				//mapping was unsuccessful
+			}
+			
+			ac_context_pop(); // we don't need the return value here
 		}
-		
-		ac_context_pop(); // we don't need the return value here
-		#endif
 	}							/* end of input-reading loop */
 }
 

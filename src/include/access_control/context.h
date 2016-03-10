@@ -54,4 +54,7 @@ extern ac_context_stack context_stack;
 /* Stack pop method */
 extern ac_context *ac_context_pop();
 
+/* bool telling if frontend is connected */
+extern bool frontend_connected;
+
 #endif /* CONTEXT_H */

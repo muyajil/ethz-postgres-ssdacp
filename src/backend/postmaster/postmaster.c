@@ -182,6 +182,9 @@ static Backend *ShmemBackendArray;
 
 BackgroundWorker *MyBgworkerEntry = NULL;
 
+// Boolean that tells if frontend is connected
+bool frontend_connected;
+
 
 
 /* The socket number we are listening for connections on */
@@ -4179,9 +4182,7 @@ BackendRun(Port *port)
 	int			usecs;
 	int			i;
 
-	//#ifndef FRONTEND_CONNECTED
-	#define FRONTEND_CONNECTED 1
-	//#endif
+	frontend_connected = true;
 	/*
 	 * Don't want backend to be able to see the postmaster random number
 	 * generator state.  We have to clobber the static random_seed *and* start

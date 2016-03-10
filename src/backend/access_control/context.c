@@ -72,7 +72,7 @@ bool perform_mapping(void){
 		 strcpy(select_query_string, "SELECT * FROM");
 		 strcat(select_query_string, relation_name);
 		 strcat(select_query_string, ";");
-		 free(relation_name);
+		 //free(relation_name);
 
 		 //Now we will parse this
 		 parsetree_list = pg_parse_query(select_query_string);

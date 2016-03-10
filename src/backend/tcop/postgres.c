@@ -682,8 +682,8 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		context = (ac_context *) calloc(1, sizeof(context));
 		context->user = GetSessionUserId();
 		context->invoker = GetUserId();
-		context_query = (Query *)calloc(1, sizeof(*query));
-		context_query = (Query *) memcpy(context->query,(void *) query, sizeof(*query));
+		context_query = (Query *) calloc(1, sizeof(*query));
+		context_query = (Query *) memcpy(context->query, query, sizeof(*query));
 		context->query = context_query;
 		context->query_string = query_string;
 

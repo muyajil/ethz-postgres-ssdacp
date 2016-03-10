@@ -68,8 +68,8 @@ bool perform_mapping(void){
 		 relation_name = create_stmt->relation->relname;
 
 		 // Next we will construct a string representing a SELECT that collects all data from the new table
-		 select_query_string = malloc(strlen(relation_name)+14);
-		 strcpy(select_query_string, "SELECT * FROM");
+		 select_query_string = malloc(strlen(relation_name)+15);
+		 strcpy(select_query_string, "SELECT * FROM ");
 		 strcat(select_query_string, relation_name);
 		 strcat(select_query_string, ";");
 		 //free(relation_name);

@@ -122,6 +122,7 @@
 #include "utils/memutils.h"
 #include "utils/ps_status.h"
 #include "utils/timeout.h"
+#include "access_control/context.h"
 
 #ifdef EXEC_BACKEND
 #include "storage/spin.h"
@@ -181,11 +182,6 @@ static Backend *ShmemBackendArray;
 #endif
 
 BackgroundWorker *MyBgworkerEntry = NULL;
-
-// Boolean that tells if frontend is connected
-bool frontend_connected;
-
-
 
 /* The socket number we are listening for connections on */
 int			PostPortNumber;
@@ -4182,7 +4178,6 @@ BackendRun(Port *port)
 	int			usecs;
 	int			i;
 
-	frontend_connected = true;
 	/*
 	 * Don't want backend to be able to see the postmaster random number
 	 * generator state.  We have to clobber the static random_seed *and* start

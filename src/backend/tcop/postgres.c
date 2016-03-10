@@ -673,7 +673,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
 
-	if(frontend_connected){
+	if(is_the_frontend_connected){
 		// Push to the stack
 		context.user = GetSessionUserId();
 		context.invoker = GetUserId();
@@ -3608,7 +3608,7 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
-	if(frontend_connected){
+	if(is_the_frontend_connected){
 		/* Setup context stack */
 		array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 
@@ -4306,7 +4306,7 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
-		if(frontend_connected){
+		if(is_the_frontend_connected){
 			// Before popping we perform the mapping
 			mapping_result = perform_mapping();
 			if(!mapping_result){

@@ -102,6 +102,9 @@ int			PostAuthDelay = 0;
 /* global context stack */
 ac_context_stack context_stack;
 
+/* boolean telling if connected to psql */
+bool psql_connection = false;
+
 /* ----------------
  *		private variables
  * ----------------
@@ -673,7 +676,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
 
-	if(is_the_frontend_connected){
+	if(psql_connection){
 		// Push to the stack
 		context.user = GetSessionUserId();
 		context.invoker = GetUserId();
@@ -3591,6 +3594,10 @@ PostgresMain(int argc, char *argv[],
 	volatile bool send_ready_for_query = true;
 	ac_context *array;
 	bool mapping_result;
+	const char* varname;
+	const char* psql_name;
+	const char* application_name;
+	const char* psql_string;
 
 	/* Initialize startup process environment if necessary. */
 	if (!IsUnderPostmaster)
@@ -3608,7 +3615,7 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
-	if(is_the_frontend_connected){
+	if(psql_connection){
 		/* Setup context stack */
 		array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 
@@ -4050,6 +4057,13 @@ PostgresMain(int argc, char *argv[],
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
 
+		psql_name = "application_name";
+		psql_string = "psql";
+		application_name = GetConfigOptionByName(psql_name, &varname, true);
+		if(!strcmp(application_name, psql_string)){
+			psql_connection = true;
+		}
+
 		switch (firstchar)
 		{
 			case 'Q':			/* simple query */
@@ -4306,7 +4320,7 @@ PostgresMain(int argc, char *argv[],
 						 errmsg("invalid frontend message type %d",
 								firstchar)));
 		}
-		if(is_the_frontend_connected){
+		if(psql_connection){
 			// Before popping we perform the mapping
 			mapping_result = perform_mapping();
 			if(!mapping_result){

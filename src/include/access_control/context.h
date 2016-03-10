@@ -54,7 +54,7 @@ extern ac_context_stack context_stack;
 /* Stack pop method */
 extern ac_context *ac_context_pop();
 
-/* bool telling if frontend is connected */
-bool is_the_frontend_connected;
+/* Method for getting options, defined in guc.c */
+extern char* GetConfigOptionByName(const char *name, const char **varname, bool missing_ok);
 
 #endif /* CONTEXT_H */

@@ -53,7 +53,7 @@ bool perform_mapping(void){
 	List *parsetree_list;
 
 	// Get the query from the stack (we get a copy, so we can modify it as we wish)
-	query = *(context_stack.top->query);
+	query = context_stack.top->query;
 	//First we need to test if we create a table
 	if(query.utilityStmt->type == T_CreateStmt){
 		/* Add it to the map

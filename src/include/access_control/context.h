@@ -15,7 +15,7 @@
 struct ac_context_struct{
 	Oid user;
 	Oid invoker;
-	Query *query;
+	Query query;
 	const char *query_string;
 };
 

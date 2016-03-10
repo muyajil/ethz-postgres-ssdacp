@@ -680,8 +680,8 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		// Push to the stack
 		context.user = GetSessionUserId();
 		context.invoker = GetUserId();
-		//context.query = (Query *) memcpy(context.query,(void *) query, sizeof(*query));
-		context.query = query;
+		context.query = (Query *) memcpy(context.query,(void *) query, sizeof(*query));
+		//context.query = query;
 		context.query_string = query_string;
 
 		ac_context_push(&context);
@@ -3606,6 +3606,15 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
+
+	// Test if connection is made via psql
+	psql_name = "application_name";
+	psql_string = "psql";
+	application_name = GetConfigOptionByName(psql_name, &varname, true);
+	if(!strcmp(application_name, psql_string)){
+		psql_connection = true;
+	}
+
 	if(psql_connection){
 		/* Setup context stack */
 		array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
@@ -4047,13 +4056,6 @@ PostgresMain(int argc, char *argv[],
 		 */
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
-
-		psql_name = "application_name";
-		psql_string = "psql";
-		application_name = GetConfigOptionByName(psql_name, &varname, true);
-		if(!strcmp(application_name, psql_string)){
-			psql_connection = true;
-		}
 
 		switch (firstchar)
 		{

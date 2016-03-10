@@ -680,7 +680,8 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		// Push to the stack
 		context.user = GetSessionUserId();
 		context.invoker = GetUserId();
-		memcpy(context.query, query, sizeof(*query));
+		//context.query = (Query *) memcpy(context.query,(void *) query, sizeof(*query));
+		context.query = query;
 		context.query_string = query_string;
 
 		ac_context_push(&context);

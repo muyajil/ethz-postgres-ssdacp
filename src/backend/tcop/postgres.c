@@ -682,7 +682,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		context = (ac_context *) calloc(1, sizeof(context));
 		context->user = GetSessionUserId();
 		context->invoker = GetUserId();
-		context->query = (Query *)calloc(1, sizeof(*query));
+		context_query = (Query *)calloc(1, sizeof(*query));
 		context_query = (Query *) memcpy(context->query,(void *) query, sizeof(*query));
 		context->query = context_query;
 		context->query_string = query_string;
@@ -4315,9 +4315,11 @@ PostgresMain(int argc, char *argv[],
 		}
 		if(psql_connection){
 			// Before popping we perform the mapping
-			mapping_result = perform_mapping();
-			if(!mapping_result){
-				//mapping was unsuccessful
+			if(context_stack->top->query->utilityStmt){
+				mapping_result = perform_mapping();
+				if(!mapping_result){
+					//mapping was unsuccessful
+				}
 			}
 			
 			ac_context_pop(); // we don't need the return value here

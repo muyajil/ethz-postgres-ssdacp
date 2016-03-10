@@ -3606,24 +3606,14 @@ PostgresMain(int argc, char *argv[],
 	 * Parse command-line options.
 	 */
 	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
+	/* Setup context stack */
+	array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
 
-	// Test if connection is made via psql
-	psql_name = "application_name";
-	psql_string = "psql";
-	application_name = GetConfigOptionByName(psql_name, &varname, true);
-	if(!strcmp(application_name, psql_string)){
-		psql_connection = true;
-	}
+	context_stack.array = &array;
+	context_stack.top = NULL;
+	context_stack.size = INIT_STACK_SIZE;
+	context_stack.free_slots = INIT_STACK_SIZE;
 
-	if(psql_connection){
-		/* Setup context stack */
-		array = (ac_context *)calloc(INIT_STACK_SIZE, sizeof(ac_context*));
-
-		context_stack.array = &array;
-		context_stack.top = NULL;
-		context_stack.size = INIT_STACK_SIZE;
-		context_stack.free_slots = INIT_STACK_SIZE;
-	}
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)
@@ -4056,6 +4046,13 @@ PostgresMain(int argc, char *argv[],
 		 */
 		if (ignore_till_sync && firstchar != EOF)
 			continue;
+
+		psql_name = "application_name";
+		psql_string = "psql";
+		application_name = GetConfigOptionByName(psql_name, &varname, true);
+		if(!strcmp(application_name, psql_string)){
+			psql_connection = true;
+		}
 
 		switch (firstchar)
 		{

@@ -665,6 +665,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	Query	   *query;
 	List	   *querytree_list;
 	ac_context *context;
+	Query *context_query;
 
 	TRACE_POSTGRESQL_QUERY_REWRITE_START(query_string);
 
@@ -678,11 +679,12 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	if(psql_connection){
 		// Push to the stack
-		context = calloc(1, sizeof(context));
+		context = (ac_context *) calloc(1, sizeof(context));
 		context->user = GetSessionUserId();
 		context->invoker = GetUserId();
-		//context->query = (Query *) memcpy(context.query,(void *) query, sizeof(*query));
-		context->query = *query;
+		context->query = (Query *)calloc(1, sizeof(*query));
+		context_query = (Query *) memcpy(context->query,(void *) query, sizeof(*query));
+		context->query = context_query;
 		context->query_string = query_string;
 
 		ac_context_push(context);

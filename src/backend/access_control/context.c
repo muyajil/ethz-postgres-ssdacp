@@ -51,6 +51,8 @@ bool perform_mapping(void){
 	Query query;
 	int num_sets;
 	List *parsetree_list;
+	Node *parsetree;
+	List *querytree_list;
 
 	// Get the query from the stack (we get a copy, so we can modify it as we wish)
 	query = *(context_stack.top->query);
@@ -76,6 +78,10 @@ bool perform_mapping(void){
 
 		 //Now we will parse this
 		 parsetree_list = pg_parse_query(select_query_string);
+		 parsetree = (Node *)lfirst(parsetree_list->head);
+		 querytree_list = pg_parse_and_analyze(parse_tree, select_query_string, NULL, 0);
+
+		 //Maybe try with raw_parser and then pg_analyze, probably better results.
 
 	} else if(query.utilityStmt->type == T_ViewStmt){
 		/* Here we want to split up the query in a way that we can reuse the maps directly

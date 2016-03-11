@@ -79,7 +79,7 @@ bool perform_mapping(void){
 		 //Now we will parse this
 		 parsetree_list = pg_parse_query(select_query_string);
 		 parsetree = (Node *)lfirst(parsetree_list->head);
-		 querytree_list = pg_parse_and_analyze(parse_tree, select_query_string, NULL, 0);
+		 querytree_list = pg_parse_and_analyze(parsetree, select_query_string, NULL, 0);
 
 		 //Maybe try with raw_parser and then pg_analyze, probably better results.
 

@@ -57,4 +57,7 @@ extern ac_context *ac_context_pop();
 /* Method for getting options, defined in guc.c */
 extern char* GetConfigOptionByName(const char *name, const char **varname, bool missing_ok);
 
+/* Method for analyzing and parsing query, defined in postgres.c */
+Query * parse_analyze(Node *parseTree, const char *sourceText, Oid *paramTypes, int numParams);
+
 #endif /* CONTEXT_H */

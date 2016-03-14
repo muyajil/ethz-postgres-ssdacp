@@ -31,15 +31,27 @@ struct ac_context_stack_struct{
 
 typedef struct ac_context_stack_struct ac_context_stack;
 
-/* global 2d - map: view -> included in */
+/* global 2d - map: view -> included in 
+ * Here we take the intersections for the rewriting
+ */
+extern char **included_in;
 
-/* global 2d - map: view -> includes */
+/* global 2d - map: view -> includes 
+ * Here we take the unions for the rewriting
+ */
+extern char **includes;
 
-/* global 1d - map: all created tables and views (even helper views) */
+/* global 1d - map: all created tables and views (even helper views) 
+ * just an array of char pointers, each one 8 bytes
+ * this gives the index into the 2d maps above
+ */
+extern char **all_relations;
 
-/* save maps function */
+/* number of char pointers in the array above */
+extern int num_relations;
 
-/* load maps function */
+/* add to maps function, returns the index of the table after adding */
+extern int add_to_map(const char *relname);
 
 /* perform mapping function */
 extern bool perform_mapping();

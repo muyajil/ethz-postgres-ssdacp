@@ -102,6 +102,12 @@ int			PostAuthDelay = 0;
 /* global context stack */
 ac_context_stack context_stack;
 
+/* maps for rewriting */
+int num_relations = 0;
+char **all_relations = NULL;
+char **includes = NULL;
+char **included_in = NULL;
+
 /* boolean telling if connected to psql */
 bool psql_connection = false;
 

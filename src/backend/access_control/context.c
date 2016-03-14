@@ -7,6 +7,7 @@
 void ac_context_push(ac_context *context);
 ac_context *ac_context_pop(void);
 bool perform_mapping(void);
+int add_to_map(const char *relname);
 List* get_powerset(List target_list, int i);
 bool* get_bitmask(int num, int length);
 
@@ -44,6 +45,7 @@ bool perform_mapping(void){
 	SelectStmt *select_stmt;
 	List *next_list;
 	List *target_list;
+	List *from_list;
 	Node *where_clause_node;
 	char *relation_name;
 	char *select_query_string;
@@ -53,6 +55,7 @@ bool perform_mapping(void){
 	List *parsetree_list;
 	Node *parsetree;
 	Query *select_query;
+	int index_table;
 
 	// Get the query from the stack (we get a copy, so we can modify it as we wish)
 	query = *(context_stack.top->query);
@@ -69,16 +72,18 @@ bool perform_mapping(void){
 		 create_stmt = (CreateStmt *) query.utilityStmt;
 		 relation_name = create_stmt->relation->relname;
 
+		 index_table = add_to_map(relation_name);
+
 		 // Next we will construct a string representing a SELECT that collects all data from the new table
-		 select_query_string = malloc(strlen(relation_name)+15);
-		 strcpy(select_query_string, "SELECT * FROM ");
-		 strcat(select_query_string, relation_name);
-		 strcat(select_query_string, ";");
+		 //select_query_string = malloc(strlen(relation_name)+15);
+		 //strcpy(select_query_string, "SELECT * FROM ");
+		 //strcat(select_query_string, relation_name);
+		 //strcat(select_query_string, ";");
 		 //free(relation_name);
 
 		 //Now we will parse this
-		 parsetree_list = pg_parse_query(select_query_string);
-		 parsetree = (Node *)lfirst(parsetree_list->head);
+		 //parsetree_list = pg_parse_query(select_query_string);
+		 //parsetree = (Node *)lfirst(parsetree_list->head);
 		 //select_query = parse_analyze(parsetree, select_query_string, NULL, 0);
 		 
 
@@ -96,13 +101,17 @@ bool perform_mapping(void){
 			select_stmt = (SelectStmt *) view_stmt->query;
 			// Now we have access to the different parts of the query
 
-
+			from_list = select_stmt->fromClause;
+			if(from_list->length == 1){
+				//ATM we only support this type of view
+				
+			}
 			/* In the following section we will address all possible projections of the target list
 			 * i.e. the coloumns of the view that is to be created
 			 */
-			target_list = select_stmt->targetList;
+			//target_list = select_stmt->targetList;
 
-			num_sets = pow(2, target_list->length) - 1;
+			//num_sets = pow(2, target_list->length) - 1;
 			/*
 			while(num_sets--){
 				// here we go through all the powersets (in reverse order i.e. start with all elements end with 0
@@ -119,13 +128,14 @@ bool perform_mapping(void){
 			 * What about arithmetic expressions? We need to check for that!
 			 */
 
+			 /*
 			 where_clause_node = select_stmt->whereClause;
 			 if(where_clause_node->type == T_BoolExpr){
-			 	/* then we know we have some boolean expression
-			 	 * We have where_clause -> args which is a List * holding arguments
-			 	 * BoolExpr *arg1 = (BoolExpr *) where_clause -> args -> head -> data
-			 	 * BoolExpr *arg2 = (BoolExpr *) where_clause -> args -> tail -> data
-			 	 */
+			 	// then we know we have some boolean expression
+			 	// We have where_clause -> args which is a List * holding arguments
+			 	// BoolExpr *arg1 = (BoolExpr *) where_clause -> args -> head -> data
+			 	// BoolExpr *arg2 = (BoolExpr *) where_clause -> args -> tail -> data
+			 	 
 			 	where_clause = (BoolExpr *) where_clause_node;
 
 			 	if(where_clause->boolop == AND_EXPR){
@@ -145,6 +155,7 @@ bool perform_mapping(void){
 			 	// then we do not have a boolean expression here
 			 	// probably arithmetic
 			 }
+			 */
 
 		} else {
 			// Neither T_CreateStmt nor T_ViewStmt
@@ -154,6 +165,12 @@ bool perform_mapping(void){
 
 	}
 
+}
+
+int add_to_map(const char *relname){
+	all_relations = (char **) realloc(all_relations, ++num_relations*sizeof(char *));
+	*(all_relations+num_relations-1) = relname;
+	return num_relations-1;
 }
 
 List* get_powerset(List target_list, int i){

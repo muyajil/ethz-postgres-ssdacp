@@ -53,6 +53,8 @@ extern int num_relations;
 /* add to maps function, returns the index of the table after adding */
 extern int add_to_map(const char *relname);
 
+extern int find_in_map(const char *relname);
+
 /* perform mapping function */
 extern bool perform_mapping();
 

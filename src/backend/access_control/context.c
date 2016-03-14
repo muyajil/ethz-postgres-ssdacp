@@ -8,6 +8,7 @@ void ac_context_push(ac_context *context);
 ac_context *ac_context_pop(void);
 bool perform_mapping(void);
 int add_to_map(const char *relname);
+int find_in_map(const char *relation_name);
 List* get_powerset(List target_list, int i);
 bool* get_bitmask(int num, int length);
 
@@ -43,19 +44,21 @@ bool perform_mapping(void){
 	ViewStmt *view_stmt;
 	CreateStmt *create_stmt;
 	SelectStmt *select_stmt;
-	List *next_list;
-	List *target_list;
+	//List *next_list;
+	//List *target_list;
 	List *from_list;
-	Node *where_clause_node;
+	//Node *where_clause_node;
 	char *relation_name;
-	char *select_query_string;
-	BoolExpr *where_clause;
+	RangeVar *relation;
+	//char *select_query_string;
+	//BoolExpr *where_clause;
 	Query query;
-	int num_sets;
-	List *parsetree_list;
-	Node *parsetree;
-	Query *select_query;
+	//int num_sets;
+	//List *parsetree_list;
+	//Node *parsetree;
+	//Query *select_query;
 	int index_table;
+	int index_view;
 
 	// Get the query from the stack (we get a copy, so we can modify it as we wish)
 	query = *(context_stack.top->query);
@@ -86,6 +89,7 @@ bool perform_mapping(void){
 		 //parsetree = (Node *)lfirst(parsetree_list->head);
 		 //select_query = parse_analyze(parsetree, select_query_string, NULL, 0);
 		 
+		 return TRUE;
 
 		 //Maybe try with raw_parser and then pg_analyze, probably better results.
 
@@ -104,8 +108,15 @@ bool perform_mapping(void){
 			from_list = select_stmt->fromClause;
 			if(from_list->length == 1){
 				//ATM we only support this type of view
-				
+				relation = (RangeVar *) from_list->head->data.ptr_value;
+				relation_name = relation->relname;
+				// Add the new view to the map
+				index_view = add_to_map(view_stmt->view->relname);
+				index_table = find_in_map(relation_name);
+				*(includes+index_table) = view_stmt->view->relname;
+				*(included_in+index_view) = relation_name;
 			}
+			return TRUE;
 			/* In the following section we will address all possible projections of the target list
 			 * i.e. the coloumns of the view that is to be created
 			 */
@@ -164,13 +175,21 @@ bool perform_mapping(void){
 		}
 
 	}
-
+	return FALSE;
 }
 
 int add_to_map(const char *relname){
 	all_relations = (char **) realloc(all_relations, ++num_relations*sizeof(char *));
+	includes = (char **) realloc(includes, ++num_relations*sizeof(char *));
+	included_in = (char **) realloc(included_in, ++num_relations*sizeof(char *));
 	*(all_relations+num_relations-1) = relname;
 	return num_relations-1;
+}
+
+int find_in_map(const char *relation_name){
+	int index = 0;
+	while(!strcmp(relation_name, *(all_relations+index))) index++;
+	return index;
 }
 
 List* get_powerset(List target_list, int i){

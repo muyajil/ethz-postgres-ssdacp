@@ -191,7 +191,7 @@ int add_to_map(const char *relname){
 
 int find_in_map(const char *relation_name){
 	int index = 0;
-	while(!strcmp(relation_name, *(all_relations+index))) index++;
+	while(strcmp(relation_name, *(all_relations+index))) index++;
 	return index;
 }
 

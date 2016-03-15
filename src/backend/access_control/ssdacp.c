@@ -509,24 +509,26 @@ ac_return_data authorized(ac_decision_data *decision_data){
 		// Now we need to check if we need to rewrite it
 		if(!context_stack.top->rewritten){
 			// That means the query was not rewritten yet and we need to rewrite it
-			rewritten_query = rewrite();
-			
-			rewritten_context = (ac_context *) calloc(1, sizeof(ac_context));
-			rewritten_context->user = GetSessionUserId();
-			rewritten_context->invoker = GetUserId();
-			rewritten_context->query = NULL;
-			rewritten_context->query_string = rewritten_query;
-			rewritten_context->authorized = TRUE;
-			rewritten_context->rewritten = TRUE;
-			rewritten_context->authorizes_next = FALSE;
-			// Here we will set the authorized bit in context to true
-			// Also the check_result bit is set to true
-			// After exec_simple_query returns the authorized bit should be set for the previous query
-			// If the rewritten query returns NULL we set the authorizes_next bit, first it is set to false
-			// Also after exec_simple_query returns we must of course pop the query here again
+			// There are select queries without fromlist, like select pg_backend_pid() these are allowed for now
+			if(context_stack.top->query->jointree->fromlist){
+				rewritten_query = rewrite();
+				rewritten_context = (ac_context *) calloc(1, sizeof(ac_context));
+				rewritten_context->user = GetSessionUserId();
+				rewritten_context->invoker = GetUserId();
+				rewritten_context->query = NULL;
+				rewritten_context->query_string = rewritten_query;
+				rewritten_context->authorized = TRUE;
+				rewritten_context->rewritten = TRUE;
+				rewritten_context->authorizes_next = FALSE;
+				// Here we will set the authorized bit in context to true
+				// Also the check_result bit is set to true
+				// After exec_simple_query returns the authorized bit should be set for the previous query
+				// If the rewritten query returns NULL we set the authorizes_next bit, first it is set to false
+				// Also after exec_simple_query returns we must of course pop the query here again
 
-			popped = ac_context_pop();
-			context_stack.top->authorized = popped->authorizes_next;
+				popped = ac_context_pop();
+				context_stack.top->authorized = popped->authorizes_next;
+			}
 
 		} else {
 			// That means the query is rewritten

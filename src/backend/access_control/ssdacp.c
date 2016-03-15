@@ -1,4 +1,5 @@
 #include "access_control/access_control.h"
+#include "access_control/context.h"
 
 /* Declaration of function that checks GRANT
  * If the grant is allowed this function returns the current privileges
@@ -38,6 +39,8 @@ bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
  * We also need to set the return value union and return that further up.
  */
 ac_return_data authorized(ac_decision_data *decision_data);
+
+char *rewrite(void);
 
 static AclMode
 ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
@@ -495,9 +498,36 @@ ac_return_data authorized(ac_decision_data *decision_data){
 
 	/* Declare return data */
 	ac_return_data return_data;
+	ac_context *popped;
+	char *rewritten_query;
 
 	/* Based on the command type call the correct decision functions */
-	if(decision_data->create_relation_data != NULL){
+	/* first we check if we have a select statement */
+	if(context_stack->top->query->commandType == CMD_SELECT){
+		// That means a select query
+		// Now we need to check if we need to rewrite it
+		if(!context_stack->top->rewritten){
+			// That means the query was not rewritten yet and we need to rewrite it
+			rewritten_query = rewrite();
+			// We rewrite the query and push it to the stack and call exec_simple_query
+			// Here we will set the authorized bit in context to true
+			// Also the check_result bit is set to true
+			// After exec_simple_query returns the authorized bit should be set for the previous query
+			// If the rewritten query returns NULL we set the authorizes_next bit, first it is set to false
+			// Also after exec_simple_query returns we must of course pop the query here again
+
+			popped = ac_context_pop();
+			context_stack->top->authorized = popped->authorizes_next;
+
+		} else {
+			// That means the query is rewritten
+			// we do nothing, since the authorized bit is true, it will be set true below and the query will be executed
+		}
+		// After we did the check we set the execute bit same as the authorized bit
+		return_data.execute = context_stack->top->authorized;
+		return return_data;
+
+	} else if(decision_data->create_relation_data != NULL){
 		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
 			decision_data->create_relation_data->relation,
 			decision_data->create_relation_data->lockmode,
@@ -530,4 +560,8 @@ ac_return_data authorized(ac_decision_data *decision_data){
 	} 
 	return_data.nothing = 0;
 	return return_data;
+}
+
+char *rewrite(void){
+	// Here we will rewrite the query that is in the top context
 }

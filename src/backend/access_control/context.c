@@ -182,16 +182,18 @@ bool perform_mapping(void){
 }
 
 int add_to_map(const char *relname){
+	int stepsize = sizeof(char *);
 	all_relations = (char **) realloc(all_relations, ++num_relations*sizeof(char *));
 	includes = (char **) realloc(includes, ++num_relations*sizeof(char *));
 	included_in = (char **) realloc(included_in, ++num_relations*sizeof(char *));
-	*(all_relations+num_relations-1) = relname;
+	*(all_relations+(num_relations-1)*stepsize) = relname;
 	return num_relations-1;
 }
 
 int find_in_map(const char *relation_name){
 	int index = 0;
-	while(strcmp(relation_name, *(all_relations+index))) index++;
+	int stepsize = sizeof(char *);
+	while(strcmp(relation_name, *(all_relations+index*stepsize))) index++;
 	return index;
 }
 

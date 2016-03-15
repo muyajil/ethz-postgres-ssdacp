@@ -1,6 +1,4 @@
 #include "access_control/access_control.h"
-#include "access_control/context.h"
-#include "commands/trigger.h"
 
 /* Declaration of function that checks GRANT
  * If the grant is allowed this function returns the current privileges
@@ -40,8 +38,6 @@ bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation);
  * We also need to set the return value union and return that further up.
  */
 ac_return_data authorized(ac_decision_data *decision_data);
-
-bool integrity_auth(state s, action a);
 
 static AclMode
 ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_privs,
@@ -132,7 +128,7 @@ ssdacp_restrict_and_check_grant(bool is_grant, AclMode avail_goptions, bool all_
 		{
 			if (objkind == ACL_KIND_COLUMN && colname)
 				ereport(WARNING,
-					errcode(ERRCODE_WARNING_PRIVILEGE_NOT_GRANTED),
+						(errcode(ERRCODE_WARNING_PRIVILEGE_NOT_GRANTED),
 						 errmsg("no privileges were granted for column \"%s\" of relation \"%s\"",
 								colname, objname)));
 			else
@@ -292,23 +288,19 @@ Oid ssdacp_RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 
 void ssdacp_CreateTrigger(bool isInternal, Relation rel, Oid constrrelid, AclResult *aclresult)
 {
-	if (!isInternal)
-	{
-		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
-									  ACL_TRIGGER);
-		if (aclresult != ACLCHECK_OK)
-			aclcheck_error(aclresult, ACL_KIND_CLASS,
-						   RelationGetRelationName(rel));
+	if (!isInternal){
+		*aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(), ACL_TRIGGER);
 
-		if (OidIsValid(constrrelid))
-		{
-			aclresult = pg_class_aclcheck(constrrelid, GetUserId(),
-										  ACL_TRIGGER);
-			if (aclresult != ACLCHECK_OK)
-				aclcheck_error(aclresult, ACL_KIND_CLASS,
-							   get_rel_name(constrrelid));
-		}
-	}
+		if (*aclresult != ACLCHECK_OK)
+			aclcheck_error(*aclresult, ACL_KIND_CLASS, RelationGetRelationName(rel));
+
+		if (OidIsValid(constrrelid)){
+  			*aclresult = pg_class_aclcheck(constrrelid, GetUserId(), ACL_TRIGGER);
+
+			if (*aclresult != ACLCHECK_OK)
+  				aclcheck_error(*aclresult, ACL_KIND_CLASS, get_rel_name(constrrelid));
+  		}
+  	}
 }
 
 bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
@@ -341,7 +333,7 @@ bool ssdacp_ExecCheckRTPerms(List *rangeTable, bool ereport_on_violation)
  * ExecCheckRTEPerms
  *		Check access permissions for a single RTE.
  */
-static bool
+bool
 ExecCheckRTEPerms(RangeTblEntry *rte)
 {
 	AclMode		requiredPerms;
@@ -461,7 +453,7 @@ ExecCheckRTEPerms(RangeTblEntry *rte)
  *		Check INSERT or UPDATE access permissions for a single RTE (these
  *		are processed uniformly).
  */
-static bool
+bool
 ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
 						  AclMode requiredPerms)
 {
@@ -499,52 +491,43 @@ ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
 	return true;
 }
 
-/* Pseudocode implementation of the integrity_auth function
- * In the paper this is the auth function.
- * Argument types and must still be declared
- *
- */
-
-bool integrity_auth(state s, action a){
-    bool result = false;
-
-    return result;
-}
-
 ac_return_data authorized(ac_decision_data *decision_data){
 
-	// First we need to check if we have a query that we do not support
-	
+	/* Declare return data */
+	ac_return_data return_data;
 
-	bool integrity = false;
-	bool confidentiality = false;
-
-	// We start by finding out if the query violates integrity
-	// The first thing we need to find out is if we are executing a trigger
-	// For that there is a function in trigger.c Datum pg_trigger_depth(PG_FUNCTION_ARGS)
-	// I don't get why we need the argument there, I will try to pass NULL.
-	// Datum is defined by: typedef uintptr_t Datum 
-	// uintptr_t is an unsigned int that is capable of holding a pointer
-	if(pg_trigger_depth(NULL) > 0){
-		// Here we should be in a trigger
-		// Next we need to find out if we are executing a triggers condition 
-		// I.e. if we are in a trigger and executing a SELECT command
-		if(true){
-			integrity = true;
-		} else {
-			// Next we need to check if we are executing the triggers action (should always be true?)
-			if(true){
-				integrity = integrity_auth(decision_data);
-			}
-		}
-
-	} else {
-		// Here we should NOT be in a trigger
-		// Therefore we should be able to just return auth
-		integrity = integrity_auth(decision_data);
-	}
-
-	// Next we take care about confidentiality
-	
-
+	/* Based on the command type call the correct decision functions */
+	if(decision_data->create_relation_data != NULL){
+		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
+			decision_data->create_relation_data->relation,
+			decision_data->create_relation_data->lockmode,
+			decision_data->create_relation_data->existing_relation_id);
+		return return_data;
+	} else if(decision_data->grant_data != NULL){
+		return_data.current_privileges = ssdacp_restrict_and_check_grant(
+			decision_data->grant_data->is_grant,
+			decision_data->grant_data->avail_goptions,
+			decision_data->grant_data->all_privs,
+			decision_data->grant_data->privileges,
+			decision_data->grant_data->objectId,
+			decision_data->grant_data->grantorId,
+			decision_data->grant_data->objkind,
+			decision_data->grant_data->objname,
+			decision_data->grant_data->att_number,
+			decision_data->grant_data->colname);
+		return return_data;
+	} else if(decision_data->create_trigger_data != NULL){
+		ssdacp_CreateTrigger(
+			decision_data->create_trigger_data->isInternal,
+			decision_data->create_trigger_data->rel,
+			decision_data->create_trigger_data->constrrelid,
+			decision_data->create_trigger_data->aclresult);
+	} else if(decision_data->nutility_data != NULL){
+		return_data.execute = ssdacp_ExecCheckRTPerms(
+			decision_data->nutility_data->rangeTable,
+			decision_data->nutility_data->ereport_on_violation);
+		return return_data;
+	} 
+	return_data.nothing = 0;
+	return return_data;
 }

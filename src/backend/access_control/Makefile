@@ -15,6 +15,6 @@ subdir = src/backend/access_control
 top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 
-OBJS = context.o oacp.o
+OBJS = context.o ssdacp.o
 
 include $(top_srcdir)/src/backend/common.mk

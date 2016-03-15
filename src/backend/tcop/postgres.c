@@ -692,6 +692,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		context_query = (Query *) memcpy(context_query, query, sizeof(*query));
 		context->query = context_query;
 		context->query_string = query_string;
+		context->godmode = FALSE;
 
 		ac_context_push(context);
 	}

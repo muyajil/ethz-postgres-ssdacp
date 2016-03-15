@@ -17,6 +17,7 @@ struct ac_context_struct{
 	Oid invoker;
 	Query *query;
 	const char *query_string;
+	bool godmode;
 };
 
 typedef struct ac_context_struct ac_context;

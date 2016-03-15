@@ -37,6 +37,9 @@ ac_context *ac_context_pop(void){
 	context_stack.free_slots++;
 	context_stack.array[context_stack.size - context_stack.free_slots] = NULL;
 	context_stack.top = context_stack.array[context_stack.size - context_stack.free_slots -1];
+	if(context_stack.size == context_stack.free_slots){
+		context_stack.top = NULL;
+	}
 	return popped;
 }
 

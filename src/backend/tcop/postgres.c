@@ -683,9 +683,9 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
 
-	if(psql_connection && !context_stack->top->rewritten){
+	if(psql_connection && !context_stack.top->rewritten){
 		// Push to the stack
-		context = (ac_context *) calloc(1, sizeof(context));
+		context = (ac_context *) calloc(1, sizeof(ac_context));
 		context->user = GetSessionUserId();
 		context->invoker = GetUserId();
 		context_query = (Query *) calloc(1, sizeof(*query));

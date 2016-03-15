@@ -499,17 +499,26 @@ ac_return_data authorized(ac_decision_data *decision_data){
 	/* Declare return data */
 	ac_return_data return_data;
 	ac_context *popped;
+	ac_context *rewritten_context;
 	char *rewritten_query;
 
 	/* Based on the command type call the correct decision functions */
 	/* first we check if we have a select statement */
-	if(context_stack->top->query->commandType == CMD_SELECT){
+	if(context_stack.top->query->commandType == CMD_SELECT){
 		// That means a select query
 		// Now we need to check if we need to rewrite it
-		if(!context_stack->top->rewritten){
+		if(!context_stack.top->rewritten){
 			// That means the query was not rewritten yet and we need to rewrite it
 			rewritten_query = rewrite();
-			// We rewrite the query and push it to the stack and call exec_simple_query
+			
+			rewritten_context = (ac_context *) calloc(1, sizeof(ac_context));
+			rewritten_context->user = GetSessionUserId();
+			rewritten_context->invoker = GetUserId();
+			rewritten_context->query = NULL;
+			rewritten_context->query_string = rewritten_query;
+			rewritten_context->authorized = TRUE;
+			rewritten_context->rewritten = TRUE;
+			rewritten_context->authorizes_next = FALSE;
 			// Here we will set the authorized bit in context to true
 			// Also the check_result bit is set to true
 			// After exec_simple_query returns the authorized bit should be set for the previous query
@@ -517,14 +526,14 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			// Also after exec_simple_query returns we must of course pop the query here again
 
 			popped = ac_context_pop();
-			context_stack->top->authorized = popped->authorizes_next;
+			context_stack.top->authorized = popped->authorizes_next;
 
 		} else {
 			// That means the query is rewritten
 			// we do nothing, since the authorized bit is true, it will be set true below and the query will be executed
 		}
 		// After we did the check we set the execute bit same as the authorized bit
-		return_data.execute = context_stack->top->authorized;
+		return_data.execute = context_stack.top->authorized;
 		return return_data;
 
 	} else if(decision_data->create_relation_data != NULL){
@@ -563,5 +572,18 @@ ac_return_data authorized(ac_decision_data *decision_data){
 }
 
 char *rewrite(void){
+	List *from_list;
+	ListCell *list_item;
+	RangeVar *current_relation;
+	char *relation_name;
+	char *rewritten_query;
 	// Here we will rewrite the query that is in the top context
+	// Since this function is only called when we have a select statement we know that the top query must be a select statement
+	from_list = context_stack.top->query->jointree->fromlist;
+	list_item = from_list->head;
+	while(list_item != NULL){
+		current_relation = (RangeVar *) list_item->data.ptr_value;
+		relation_name = current_relation->relname;
+	}
+	return rewritten_query;
 }

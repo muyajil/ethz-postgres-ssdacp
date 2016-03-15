@@ -593,7 +593,7 @@ char *rewrite(void){
 		relation_name = current_relation->relname;
 		index_table = find_in_map(relation_name);
 		temp_relation = *(includes+index_table);
-		under_approximation = (char *) realloc(1, strlen(under_approximation)+strlen(temp_relation)+2);
+		under_approximation = (char *) realloc(under_approximation, strlen(under_approximation)+strlen(temp_relation)+2);
 		under_approximation = strcat(under_approximation, ", ");
 		under_approximation = strcat(under_approximation, temp_relation);
 		list_item = list_item->next;
@@ -607,9 +607,9 @@ char *rewrite(void){
 		relation_name = current_relation->relname;
 		index_table = find_in_map(relation_name);
 		temp_relation = *(included_in+index_table);
-		under_approximation = (char *) realloc(1, strlen(under_approximation)+strlen(temp_relation)+2);
-		under_approximation = strcat(under_approximation, ", ");
-		under_approximation = strcat(under_approximation, temp_relation);
+		over_approximation = (char *) realloc(over_approximation, strlen(over_approximation)+strlen(temp_relation)+2);
+		over_approximation = strcat(over_approximation, ", ");
+		over_approximation = strcat(over_approximation, temp_relation);
 		list_item = list_item->next;
 	}
 

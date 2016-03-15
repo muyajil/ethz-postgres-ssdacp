@@ -576,14 +576,42 @@ char *rewrite(void){
 	ListCell *list_item;
 	RangeVar *current_relation;
 	char *relation_name;
+	char *temp_relation;
 	char *rewritten_query;
+	char *under_approximation = NULL;
+	char *over_approximation = NULL;
+	int index_table;
 	// Here we will rewrite the query that is in the top context
 	// Since this function is only called when we have a select statement we know that the top query must be a select statement
 	from_list = context_stack.top->query->jointree->fromlist;
+
+	// Compute underapproximation
 	list_item = from_list->head;
+
 	while(list_item != NULL){
 		current_relation = (RangeVar *) list_item->data.ptr_value;
 		relation_name = current_relation->relname;
+		index_table = find_in_map(relation_name);
+		temp_relation = *(includes+index_table);
+		under_approximation = (char *) realloc(1, strlen(under_approximation)+strlen(temp_relation)+2);
+		under_approximation = strcat(under_approximation, ", ");
+		under_approximation = strcat(under_approximation, temp_relation);
+		list_item = list_item->next;
 	}
+
+	// Compute overapproximation
+	list_item = from_list->head;
+
+	while(list_item != NULL){
+		current_relation = (RangeVar *) list_item->data.ptr_value;
+		relation_name = current_relation->relname;
+		index_table = find_in_map(relation_name);
+		temp_relation = *(included_in+index_table);
+		under_approximation = (char *) realloc(1, strlen(under_approximation)+strlen(temp_relation)+2);
+		under_approximation = strcat(under_approximation, ", ");
+		under_approximation = strcat(under_approximation, temp_relation);
+		list_item = list_item->next;
+	}
+
 	return rewritten_query;
-}
+} 

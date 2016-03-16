@@ -4326,7 +4326,8 @@ PostgresMain(int argc, char *argv[],
 		if(psql_connection){
 			// Before popping we perform the mapping
 			if(context_stack.top->query->utilityStmt){
-				mapping_result = perform_mapping();
+				//mapping_result = perform_mapping();
+				mapping_result = true;
 				if(!mapping_result){
 					//mapping was unsuccessful
 				}

@@ -47,7 +47,7 @@ typedef struct ac_map_struct ac_map;
 
 /* Functions relevant to maps */
 
-extern void ac_map_init(ac_map *map);
+extern ac_map *ac_map_init(ac_map *map);
 
 extern int ac_map_append(ac_map *map, char* value);
 

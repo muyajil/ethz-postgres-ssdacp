@@ -7,7 +7,7 @@
 void ac_context_push(ac_context *context);
 ac_context *ac_context_pop(void);
 bool perform_mapping(void);
-void ac_map_init(ac_map *map);
+ac_map *ac_map_init(ac_map *map);
 int ac_map_append(ac_map *map, char* value);
 int ac_map_get_index(ac_map *map, char* value);
 char* ac_map_get_value(ac_map *map, int index);
@@ -189,7 +189,7 @@ bool perform_mapping(void){
 	return FALSE;
 }
 
-void ac_map_init(ac_map *map){
+ac_map* ac_map_init(ac_map *map){
   	// initialize size and capacity
   	if(map == NULL){
   		map = (ac_map *) malloc(sizeof(ac_map));
@@ -199,11 +199,12 @@ void ac_map_init(ac_map *map){
 
   	// allocate memory for vector->data
   	map->data = calloc(map->capacity, sizeof(char *));
+  	return map;
 }
 
 int ac_map_append(ac_map *map, char* value){
 	if(map == NULL){
-		ac_map_init(map);
+		map = ac_map_init(map);
 	}
 	// make sure there's room to expand into
   	ac_map_double_capacity_if_full(map);
@@ -233,7 +234,7 @@ char* ac_map_get_value(ac_map *map, int index){
 
 void ac_map_insert_at(ac_map *map, int index, char* value){
 	if(map == NULL){
-		ac_map_init(map);
+		map = ac_map_init(map);
 	}
 	// zero fill the vector up to the desired index
   	while (index >= map->size) {

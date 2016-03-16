@@ -191,6 +191,9 @@ bool perform_mapping(void){
 
 void ac_map_init(ac_map *map){
   	// initialize size and capacity
+  	if(map == NULL){
+  		map = (ac_map *) malloc(sizeof(ac_map));
+  	}
   	map->size = 0;
   	map->capacity = INIT_MAP_SIZE;
 

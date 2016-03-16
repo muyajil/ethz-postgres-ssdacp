@@ -220,6 +220,7 @@ int ac_map_get_index(ac_map **map, char* value){
 		if(!strcmp(value, (*map)->data[iterator])){
 			index = iterator;
 		}
+		iterator++;
 	}
 	return index;
 }

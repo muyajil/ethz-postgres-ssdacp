@@ -578,7 +578,8 @@ char *rewrite(void){
 	ListCell *list_item;
 	RangeVar *current_relation;
 	char *relation_name;
-	char *temp_relation;
+	char *under_relation;
+	char *over_relation;
 	char *rewritten_query;
 	char *under_approximation = NULL;
 	char *over_approximation = NULL;
@@ -593,27 +594,29 @@ char *rewrite(void){
 	while(list_item != NULL){
 		current_relation = (RangeVar *) list_item->data.ptr_value;
 		relation_name = current_relation->relname;
-		index_table = find_in_map(relation_name);
-		temp_relation = *(includes+index_table);
-		under_approximation = (char *) realloc(under_approximation, strlen(under_approximation)+strlen(temp_relation)+2);
+		index_table = ac_map_get_index(&all_relations, relation_name);
+		under_relation = ac_map_get_value(&includes, index_table);
+		over_relation = ac_map_get_value(&included_in, index_table);
+		under_approximation = (char *) realloc(under_approximation, strlen(under_approximation)+strlen(under_relation)+2);
 		under_approximation = strcat(under_approximation, ", ");
-		under_approximation = strcat(under_approximation, temp_relation);
+		under_approximation = strcat(under_approximation, under_relation);
+		over_approximation = (char *) realloc(over_approximation, strlen(over_approximation)+strlen(over_relation)+2);
+		over_approximation = strcat(over_approximation, ", ");
+		over_approximation = strcat(over_approximation, over_relation);
 		list_item = list_item->next;
 	}
-
+	/*
 	// Compute overapproximation
 	list_item = from_list->head;
 
 	while(list_item != NULL){
 		current_relation = (RangeVar *) list_item->data.ptr_value;
 		relation_name = current_relation->relname;
-		index_table = find_in_map(relation_name);
-		temp_relation = *(included_in+index_table);
-		over_approximation = (char *) realloc(over_approximation, strlen(over_approximation)+strlen(temp_relation)+2);
-		over_approximation = strcat(over_approximation, ", ");
-		over_approximation = strcat(over_approximation, temp_relation);
+		index_table = ac_map_get_index(&all_relations, relation_name);
+		temp_relation = ac_map_get_value(&included_in, index_table);
+		
 		list_item = list_item->next;
 	}
-
+	*/
 	return rewritten_query;
 } 

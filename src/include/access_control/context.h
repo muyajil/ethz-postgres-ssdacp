@@ -34,29 +34,54 @@ struct ac_context_stack_struct{
 
 typedef struct ac_context_stack_struct ac_context_stack;
 
+/* Maps Data structure */
+struct ac_map_struct{
+	int size;
+	int capacity;
+	char **data;
+};
+
+typedef struct ac_map_struct ac_map;
+
+#define INIT_MAP_SIZE 100
+
+/* Functions relevant to maps */
+
+extern void ac_map_init(ac_map *map);
+
+extern int ac_map_append(ac_map *map, char* value);
+
+extern int ac_map_get_index(ac_map *map, char* value);
+
+extern char* ac_map_get_value(ac_map *map, int index);
+
+extern void ac_map_insert_at(ac_map *map, int index, char* value);
+
+extern void ac_map_double_capacity_if_full(ac_map *map);
+
 /* global 2d - map: view -> included in 
  * Here we take the intersections for the rewriting
  */
-extern char **included_in;
+extern ac_map included_in;
 
 /* global 2d - map: view -> includes 
  * Here we take the unions for the rewriting
  */
-extern char **includes;
+extern ac_map includes;
 
 /* global 1d - map: all created tables and views (even helper views) 
  * just an array of char pointers, each one 8 bytes
  * this gives the index into the 2d maps above
  */
-extern char **all_relations;
+extern ac_map all_relations;
 
 /* number of char pointers in the array above */
-extern int num_relations;
+//extern int num_relations;
 
 /* add to maps function, returns the index of the table after adding */
-extern int add_to_map(const char *relname);
+//extern int add_to_map(const char *relname);
 
-extern int find_in_map(const char *relname);
+//extern int find_in_map(const char *relname);
 
 /* perform mapping function */
 extern bool perform_mapping();

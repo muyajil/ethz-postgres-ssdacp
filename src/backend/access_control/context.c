@@ -7,10 +7,16 @@
 void ac_context_push(ac_context *context);
 ac_context *ac_context_pop(void);
 bool perform_mapping(void);
-int add_to_map(const char *relname);
-int find_in_map(const char *relation_name);
-List* get_powerset(List target_list, int i);
-bool* get_bitmask(int num, int length);
+void ac_map_init(ac_map *map);
+int ac_map_append(ac_map *map, char* value);
+int ac_map_get_index(ac_map *map, char* value);
+char* ac_map_get_value(ac_map *map, int index);
+void ac_map_insert_at(ac_map *map, int index, char* value);
+void ac_map_double_capacity_if_full(ac_map *map);
+//int add_to_map(const char *relname);
+//int find_in_map(const char *relation_name);
+//List* get_powerset(List target_list, int i);
+//bool* get_bitmask(int num, int length);
 
 /* Stack push method */
 void ac_context_push(ac_context *context){
@@ -78,7 +84,7 @@ bool perform_mapping(void){
 		 create_stmt = (CreateStmt *) query.utilityStmt;
 		 relation_name = create_stmt->relation->relname;
 
-		 index_table = add_to_map(relation_name);
+		 index_table = ac_map_append(&all_relations, relation_name);
 
 		 // Next we will construct a string representing a SELECT that collects all data from the new table
 		 //select_query_string = malloc(strlen(relation_name)+15);
@@ -114,10 +120,12 @@ bool perform_mapping(void){
 				relation = (RangeVar *) from_list->head->data.ptr_value;
 				relation_name = relation->relname;
 				// Add the new view to the map
-				index_view = add_to_map(view_stmt->view->relname);
-				index_table = find_in_map(relation_name);
-				*(includes+index_table) = view_stmt->view->relname;
-				*(included_in+index_view) = relation_name;
+				index_view = ac_map_append(&all_relations, view_stmt->view->relname);
+				index_table = ac_map_get_index(&all_relations, relation_name);
+				ac_map_insert_at(&includes, index_table, view_stmt->view->relname);
+				ac_map_insert_at(&included_in, index_view, relation_name);
+				//*(includes+index_table) = view_stmt->view->relname;
+				//*(included_in+index_view) = relation_name;
 			}
 			return TRUE;
 			/* In the following section we will address all possible projections of the target list
@@ -181,6 +189,60 @@ bool perform_mapping(void){
 	return FALSE;
 }
 
+void ac_map_init(ac_map *map){
+  	// initialize size and capacity
+  	map->size = 0;
+  	map->capacity = INIT_MAP_SIZE;
+
+  	// allocate memory for vector->data
+  	map->data = calloc(map->capacity, sizeof(char *));
+}
+
+extern int ac_map_append(ac_map *map, char* value){
+	// make sure there's room to expand into
+  	ac_map_double_capacity_if_full(map);
+
+  	// append the value and increment vector->size
+  	map->data[map->size++] = value;
+  	return map->size-1;
+}
+
+extern int ac_map_get_index(ac_map *map, char* value){
+	int index = -1;
+	int iterator = 0;
+	while(iterator < map->capacity && index < 0){
+		if(!strcmp(value, map->data[iterator])){
+			index = iterator;
+		}
+	}
+	return index;
+}
+
+extern char* ac_map_get_value(ac_map *map, int index){
+	if (index >= map->size || index < 0) {
+    	return NULL;
+  	}
+  	return map->data[index];
+}
+
+extern void ac_map_insert_at(ac_map *map, int index, char* value){
+	// zero fill the vector up to the desired index
+  	while (index >= map->size) {
+    	ac_map_append(map, 0);
+  	}
+	// set the value at the desired index
+  	map->data[index] = value;
+}
+
+extern void ac_map_double_capacity_if_full(ac_map *map){
+	if (map->size >= map->capacity) {
+    	// double vector->capacity and resize the allocated memory accordingly
+    	map->capacity *= 2;
+    	map->data = realloc(map->data, sizeof(char *) * map->capacity);
+  	}
+}
+
+/*
 int add_to_map(const char *relname){
 	int stepsize = sizeof(char *);
 	all_relations = (char **) realloc(all_relations, ++num_relations*sizeof(char *));
@@ -196,6 +258,9 @@ int find_in_map(const char *relation_name){
 	while(strcmp(relation_name, *(all_relations+index*stepsize))) index++;
 	return index;
 }
+*/
+
+/*
 
 List* get_powerset(List target_list, int i){
 	bool *bitmask;
@@ -237,3 +302,4 @@ bool* get_bitmask(int num, int length){
 
 	return bitmask;
 }
+*/

@@ -682,20 +682,22 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
 
-	if(psql_connection && (context_stack.top == NULL || !context_stack.top->rewritten)){
-		// Push to the stack
-		context = (ac_context *) calloc(1, sizeof(ac_context));
-		context->user = GetSessionUserId();
-		context->invoker = GetUserId();
-		context_query = (Query *) calloc(1, sizeof(*query));
-		context_query = (Query *) memcpy(context_query, query, sizeof(*query));
-		context->query = context_query;
-		context->query_string = query_string;
-		context->authorized = FALSE;
-		context->rewritten = FALSE;
-		context->authorizes_next = FALSE;
+	if(psql_connection){
+		if(context_stack.top == NULL || !context_stack.top->rewritten){
+			// Push to the stack
+			context = (ac_context *) calloc(1, sizeof(ac_context));
+			context->user = GetSessionUserId();
+			context->invoker = GetUserId();
+			context_query = (Query *) calloc(1, sizeof(*query));
+			context_query = (Query *) memcpy(context_query, query, sizeof(*query));
+			context->query = context_query;
+			context->query_string = query_string;
+			context->authorized = FALSE;
+			context->rewritten = FALSE;
+			context->authorizes_next = FALSE;
 
-		ac_context_push(context);
+			ac_context_push(context);
+		}
 	}
 
 	if (log_parser_stats)

@@ -47,17 +47,17 @@ typedef struct ac_map_struct ac_map;
 
 /* Functions relevant to maps */
 
-extern ac_map *ac_map_init(ac_map *map);
+extern void ac_map_init(ac_map **map);
 
-extern int ac_map_append(ac_map *map, char* value);
+extern int ac_map_append(ac_map **map, char* value);
 
-extern int ac_map_get_index(ac_map *map, char* value);
+extern int ac_map_get_index(ac_map **map, char* value);
 
-extern char* ac_map_get_value(ac_map *map, int index);
+extern char* ac_map_get_value(ac_map **map, int index);
 
-extern void ac_map_insert_at(ac_map *map, int index, char* value);
+extern void ac_map_insert_at(ac_map **map, int index, char* value);
 
-extern void ac_map_double_capacity_if_full(ac_map *map);
+extern void ac_map_double_capacity_if_full(ac_map **map);
 
 /* global 2d - map: view -> included in 
  * Here we take the intersections for the rewriting

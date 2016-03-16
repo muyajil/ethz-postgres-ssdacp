@@ -594,9 +594,9 @@ char *rewrite(void){
 	while(list_item != NULL){
 		current_relation = (RangeVar *) list_item->data.ptr_value;
 		relation_name = current_relation->relname;
-		index_table = ac_map_get_index(all_relations, relation_name);
-		under_relation = ac_map_get_value(includes, index_table);
-		over_relation = ac_map_get_value(included_in, index_table);
+		index_table = ac_map_get_index(&all_relations, relation_name);
+		under_relation = ac_map_get_value(&includes, index_table);
+		over_relation = ac_map_get_value(&included_in, index_table);
 		under_approximation = (char *) realloc(under_approximation, strlen(under_approximation)+strlen(under_relation)+2);
 		under_approximation = strcat(under_approximation, ", ");
 		under_approximation = strcat(under_approximation, under_relation);

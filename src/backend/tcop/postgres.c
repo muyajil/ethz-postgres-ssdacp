@@ -4326,14 +4326,14 @@ PostgresMain(int argc, char *argv[],
 		if(psql_connection){
 			// Before popping we perform the mapping
 			if(context_stack.top->query->utilityStmt){
-				//mapping_result = perform_mapping();
-				mapping_result = true;
+				mapping_result = perform_mapping();
+				//mapping_result = true;
 				if(!mapping_result){
 					//mapping was unsuccessful
 				}
 			}
 			
-			ac_context_pop(); // we don't need the return value here
+			//ac_context_pop(); // we don't need the return value here
 		}
 		psql_connection = false;
 	}							/* end of input-reading loop */

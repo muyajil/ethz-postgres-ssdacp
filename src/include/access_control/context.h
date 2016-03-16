@@ -75,6 +75,8 @@ extern ac_map *includes;
  */
 extern ac_map *all_relations;
 
+extern bool psql_connection;
+
 /* number of char pointers in the array above */
 //extern int num_relations;
 

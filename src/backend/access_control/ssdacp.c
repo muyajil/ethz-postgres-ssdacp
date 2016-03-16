@@ -504,40 +504,41 @@ ac_return_data authorized(ac_decision_data *decision_data){
 
 	/* Based on the command type call the correct decision functions */
 	/* first we check if we have a select statement */
-	if(context_stack.top->query->commandType == CMD_SELECT){
-		// That means a select query
-		// Now we need to check if we need to rewrite it
-		if(!context_stack.top->rewritten){
-			// That means the query was not rewritten yet and we need to rewrite it
-			// There are select queries without fromlist, like select pg_backend_pid() these are allowed for now
-			if(context_stack.top->query->jointree->fromlist){
-				rewritten_query = rewrite();
-				rewritten_context = (ac_context *) calloc(1, sizeof(ac_context));
-				rewritten_context->user = GetSessionUserId();
-				rewritten_context->invoker = GetUserId();
-				rewritten_context->query = NULL;
-				rewritten_context->query_string = rewritten_query;
-				rewritten_context->authorized = TRUE;
-				rewritten_context->rewritten = TRUE;
-				rewritten_context->authorizes_next = FALSE;
-				// Here we will set the authorized bit in context to true
-				// Also the check_result bit is set to true
-				// After exec_simple_query returns the authorized bit should be set for the previous query
-				// If the rewritten query returns NULL we set the authorizes_next bit, first it is set to false
-				// Also after exec_simple_query returns we must of course pop the query here again
+	if(context_stack.top != NULL){
+		if(context_stack.top->query->commandType == CMD_SELECT){
+			// That means a select query
+			// Now we need to check if we need to rewrite it
+			if(!context_stack.top->rewritten){
+				// That means the query was not rewritten yet and we need to rewrite it
+				// There are select queries without fromlist, like select pg_backend_pid() these are allowed for now
+				if(context_stack.top->query->jointree->fromlist){
+					rewritten_query = rewrite();
+					rewritten_context = (ac_context *) calloc(1, sizeof(ac_context));
+					rewritten_context->user = GetSessionUserId();
+					rewritten_context->invoker = GetUserId();
+					rewritten_context->query = NULL;
+					rewritten_context->query_string = rewritten_query;
+					rewritten_context->authorized = TRUE;
+					rewritten_context->rewritten = TRUE;
+					rewritten_context->authorizes_next = FALSE;
+					// Here we will set the authorized bit in context to true
+					// Also the check_result bit is set to true
+					// After exec_simple_query returns the authorized bit should be set for the previous query
+					// If the rewritten query returns NULL we set the authorizes_next bit, first it is set to false
+					// Also after exec_simple_query returns we must of course pop the query here again
 
-				popped = ac_context_pop();
-				context_stack.top->authorized = popped->authorizes_next;
+					popped = ac_context_pop();
+					context_stack.top->authorized = popped->authorizes_next;
+				}
+
+			} else {
+				// That means the query is rewritten
+				// we do nothing, since the authorized bit is true, it will be set true below and the query will be executed
 			}
-
-		} else {
-			// That means the query is rewritten
-			// we do nothing, since the authorized bit is true, it will be set true below and the query will be executed
+			// After we did the check we set the execute bit same as the authorized bit
+			return_data.execute = context_stack.top->authorized;
+			return return_data;
 		}
-		// After we did the check we set the execute bit same as the authorized bit
-		return_data.execute = context_stack.top->authorized;
-		return return_data;
-
 	} else if(decision_data->create_relation_data != NULL){
 		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
 			decision_data->create_relation_data->relation,

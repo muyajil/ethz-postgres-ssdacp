@@ -84,7 +84,7 @@ bool perform_mapping(void){
 		 create_stmt = (CreateStmt *) query.utilityStmt;
 		 relation_name = create_stmt->relation->relname;
 
-		 index_table = ac_map_append(&all_relations, relation_name);
+		 index_table = ac_map_append(all_relations, relation_name);
 
 		 // Next we will construct a string representing a SELECT that collects all data from the new table
 		 //select_query_string = malloc(strlen(relation_name)+15);
@@ -120,10 +120,10 @@ bool perform_mapping(void){
 				relation = (RangeVar *) from_list->head->data.ptr_value;
 				relation_name = relation->relname;
 				// Add the new view to the map
-				index_view = ac_map_append(&all_relations, view_stmt->view->relname);
-				index_table = ac_map_get_index(&all_relations, relation_name);
-				ac_map_insert_at(&includes, index_table, view_stmt->view->relname);
-				ac_map_insert_at(&included_in, index_view, relation_name);
+				index_view = ac_map_append(all_relations, view_stmt->view->relname);
+				index_table = ac_map_get_index(all_relations, relation_name);
+				ac_map_insert_at(includes, index_table, view_stmt->view->relname);
+				ac_map_insert_at(included_in, index_view, relation_name);
 				//*(includes+index_table) = view_stmt->view->relname;
 				//*(included_in+index_view) = relation_name;
 			}
@@ -198,7 +198,10 @@ void ac_map_init(ac_map *map){
   	map->data = calloc(map->capacity, sizeof(char *));
 }
 
-extern int ac_map_append(ac_map *map, char* value){
+int ac_map_append(ac_map *map, char* value){
+	if(map == NULL){
+		ac_map_init(map);
+	}
 	// make sure there's room to expand into
   	ac_map_double_capacity_if_full(map);
 
@@ -207,7 +210,7 @@ extern int ac_map_append(ac_map *map, char* value){
   	return map->size-1;
 }
 
-extern int ac_map_get_index(ac_map *map, char* value){
+int ac_map_get_index(ac_map *map, char* value){
 	int index = -1;
 	int iterator = 0;
 	while(iterator < map->capacity && index < 0){
@@ -218,14 +221,17 @@ extern int ac_map_get_index(ac_map *map, char* value){
 	return index;
 }
 
-extern char* ac_map_get_value(ac_map *map, int index){
+char* ac_map_get_value(ac_map *map, int index){
 	if (index >= map->size || index < 0) {
     	return NULL;
   	}
   	return map->data[index];
 }
 
-extern void ac_map_insert_at(ac_map *map, int index, char* value){
+void ac_map_insert_at(ac_map *map, int index, char* value){
+	if(map == NULL){
+		ac_map_init(map);
+	}
 	// zero fill the vector up to the desired index
   	while (index >= map->size) {
     	ac_map_append(map, 0);
@@ -234,7 +240,7 @@ extern void ac_map_insert_at(ac_map *map, int index, char* value){
   	map->data[index] = value;
 }
 
-extern void ac_map_double_capacity_if_full(ac_map *map){
+void ac_map_double_capacity_if_full(ac_map *map){
 	if (map->size >= map->capacity) {
     	// double vector->capacity and resize the allocated memory accordingly
     	map->capacity *= 2;

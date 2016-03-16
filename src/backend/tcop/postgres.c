@@ -103,9 +103,9 @@ int			PostAuthDelay = 0;
 ac_context_stack context_stack;
 
 /* maps for rewriting */
-ac_map all_relations;
-ac_map includes;
-ac_map included_in;
+ac_map *all_relations = NULL;
+ac_map *includes = NULL;
+ac_map *included_in = NULL;
 
 /* boolean telling if connected to psql */
 bool psql_connection = false;
@@ -4063,9 +4063,6 @@ PostgresMain(int argc, char *argv[],
 		application_name = GetConfigOptionByName(psql_name, &varname, true);
 		if(!strcmp(application_name, psql_string)){
 			psql_connection = true;
-			ac_map_init(&all_relations);
-			ac_map_init(&includes);
-			ac_map_init(&included_in);
 		}
 
 		switch (firstchar)

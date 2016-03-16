@@ -62,18 +62,18 @@ extern void ac_map_double_capacity_if_full(ac_map *map);
 /* global 2d - map: view -> included in 
  * Here we take the intersections for the rewriting
  */
-extern ac_map included_in;
+extern ac_map *included_in;
 
 /* global 2d - map: view -> includes 
  * Here we take the unions for the rewriting
  */
-extern ac_map includes;
+extern ac_map *includes;
 
 /* global 1d - map: all created tables and views (even helper views) 
  * just an array of char pointers, each one 8 bytes
  * this gives the index into the 2d maps above
  */
-extern ac_map all_relations;
+extern ac_map *all_relations;
 
 /* number of char pointers in the array above */
 //extern int num_relations;

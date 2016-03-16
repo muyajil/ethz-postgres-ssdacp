@@ -504,8 +504,7 @@ ac_return_data authorized(ac_decision_data *decision_data){
 
 	/* Based on the command type call the correct decision functions */
 	/* first we check if we have a select statement */
-	if(context_stack.top != NULL){
-		if(context_stack.top->query->commandType == CMD_SELECT){
+	if(context_stack.top != NULL && context_stack.top->query->commandType == CMD_SELECT){
 			// That means a select query
 			// Now we need to check if we need to rewrite it
 			if(!context_stack.top->rewritten){
@@ -538,8 +537,8 @@ ac_return_data authorized(ac_decision_data *decision_data){
 			// After we did the check we set the execute bit same as the authorized bit
 			return_data.execute = context_stack.top->authorized;
 			return return_data;
-		}
-	} else if(decision_data->create_relation_data != NULL){
+	} 
+	if(decision_data->create_relation_data != NULL){
 		return_data.target_namespace = ssdacp_RangeVarGetAndCheckCreationNamespace(
 			decision_data->create_relation_data->relation,
 			decision_data->create_relation_data->lockmode,

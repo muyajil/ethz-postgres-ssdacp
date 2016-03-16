@@ -1420,10 +1420,12 @@ ExecutePlan(EState *estate,
 		if (TupIsNull(slot))
 		{
 			/* Check if we are executing a rewritten query and if the count is 0 */
-			if(current_tuple_count == 0 && context_stack.top->rewritten){
-				// That means the result of the query was NULL and we can authorize the next one
-				context_stack.top->authorizes_next = TRUE;
-			}
+			if(context_stack.top != NULL){
+				if(current_tuple_count == 0 && context_stack.top->rewritten){
+					// That means the result of the query was NULL and we can authorize the next one
+					context_stack.top->authorizes_next = TRUE;
+				}
+			}	
 			/* Allow nodes to release or shut down resources. */
 			(void) ExecShutdownNode(planstate);
 			break;

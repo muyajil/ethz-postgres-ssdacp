@@ -193,12 +193,12 @@ void ac_map_init(ac_map **map){
   	// initialize size and capacity
   	if(*map == NULL){
   		*map = (ac_map *) malloc(sizeof(ac_map));
-  	}
-  	(*map)->size = 0;
-  	(*map)->capacity = INIT_MAP_SIZE;
+  		(*map)->size = 0;
+  		(*map)->capacity = INIT_MAP_SIZE;
 
-  	// allocate memory for vector->data
-  	(*map)->data = calloc((*map)->capacity, sizeof(char *));
+  		// allocate memory for vector->data
+  		(*map)->data = calloc((*map)->capacity, sizeof(char *));
+  	}
 }
 
 int ac_map_append(ac_map **map, char* value){

@@ -4334,7 +4334,7 @@ PostgresMain(int argc, char *argv[],
 			
 			ac_context_pop(); // we don't need the return value here
 		}
-		psql_connection = false;
+		//psql_connection = false;
 	}							/* end of input-reading loop */
 }
 

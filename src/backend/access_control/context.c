@@ -240,7 +240,7 @@ void ac_map_insert_at(ac_map **map, int index, char* value){
 	}
 	// zero fill the vector up to the desired index
   	while (index >= (*map)->size) {
-    	ac_map_append(map, 0);
+    	ac_map_append(map, "");
   	}
 	// set the value at the desired index
   	(*map)->data[index] = value;

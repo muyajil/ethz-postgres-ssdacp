@@ -202,7 +202,13 @@ void ac_map_init(ac_map **map){
 }
 
 int ac_map_append(ac_map **map, char* value){
-	char *value_copy = (char *) malloc(strlen(value)+1);
+	char *value_copy;
+	if(value == NULL || strlen(value) == 0){
+		value_copy = NULL;
+	} else {
+		value_copy = (char *) malloc(strlen(value)+1);
+		strcpy(value_copy, value);
+	}
 	if(*map == NULL){
 		ac_map_init(map);
 	}
@@ -210,7 +216,6 @@ int ac_map_append(ac_map **map, char* value){
   	ac_map_double_capacity_if_full(map);
 
   	// append the value and increment vector->size
-  	strcpy(value_copy, value);
   	(*map)->data[(*map)->size++] = value_copy;
   	return (*map)->size-1;
 }
@@ -240,7 +245,7 @@ void ac_map_insert_at(ac_map **map, int index, char* value){
 	}
 	// zero fill the vector up to the desired index
   	while (index >= (*map)->size) {
-    	ac_map_append(map, "");
+    	ac_map_append(map, NULL);
   	}
 	// set the value at the desired index
   	(*map)->data[index] = value;
